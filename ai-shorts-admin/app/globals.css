@@ -1,0 +1,616 @@
+@import "tailwindcss";
+
+/* ============================================================
+   AI Shorts Studio — «Broadcast Console»
+   Темна редакторська панель: чорнильне полотно, волоскові лінії,
+   один кислотний акцент, дисплейний гротеск Unbounded.
+   ============================================================ */
+
+@theme {
+  --color-canvas: #0a0b0d;
+  --color-canvas-2: #0e1013;
+  --color-surface: #131619;
+  --color-surface-2: #191d22;
+  --color-surface-3: #21262c;
+
+  --color-line: #ffffff14;
+  --color-line-strong: #ffffff26;
+
+  --color-hi: #f1f4f2;
+  --color-mid: #98a1a8;
+  --color-lo: #5f686f;
+
+  --color-accent: #d6f84c;
+  --color-accent-ink: #0a0b0d;
+  --color-accent-soft: #d6f84c1f;
+
+  --color-emerald: #48dba2;
+  --color-amber: #f5b841;
+  --color-rose: #ff6f6f;
+  --color-cyan: #5cc3ff;
+  --color-violet: #b09cff;
+
+  --font-display: var(--font-unbounded), ui-sans-serif, system-ui;
+  --font-sans: var(--font-onest), ui-sans-serif, system-ui;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+
+  --radius-card: 14px;
+}
+
+/* ---------------- base ---------------- */
+
+* {
+  border-color: var(--color-line);
+}
+
+html {
+  color-scheme: dark;
+  background: var(--color-canvas);
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-canvas);
+  color: var(--color-hi);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "ss01", "cv01";
+}
+
+/* Атмосфера: холодне сяйво зверху-зліва + тепла іскра справа */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(
+      620px 420px at 6% -6%,
+      rgba(214, 248, 76, 0.07),
+      transparent 70%
+    ),
+    radial-gradient(
+      760px 520px at 104% 8%,
+      rgba(92, 195, 255, 0.055),
+      transparent 72%
+    );
+}
+
+/* Зерно плівки */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+
+::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-canvas);
+}
+::-webkit-scrollbar-thumb {
+  background: #2a3037;
+  border: 3px solid var(--color-canvas);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #39424a;
+}
+
+/* ---------------- типографіка ---------------- */
+
+.display {
+  font-family: var(--font-display);
+  letter-spacing: -0.035em;
+  font-weight: 600;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-lo);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
+}
+
+/* ---------------- поверхні ---------------- */
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.035),
+    0 1px 2px rgba(0, 0, 0, 0.45);
+}
+
+.card-hover {
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+.card-hover:hover {
+  border-color: var(--color-line-strong);
+  background: var(--color-surface-2);
+}
+
+/* Тонка «шкала» — декоративні насічки як на відеомонтажній лінійці */
+.ticks {
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--color-line-strong) 0 1px,
+    transparent 1px 9px
+  );
+  height: 6px;
+}
+
+/* ---------------- кнопки ---------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 15px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 0.16s ease,
+    border-color 0.16s ease,
+    color 0.16s ease,
+    opacity 0.16s ease;
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+.btn-primary:hover:not(:disabled) {
+  background: #e3ff70;
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: var(--color-line-strong);
+  color: var(--color-hi);
+}
+.btn-ghost:hover:not(:disabled) {
+  background: var(--color-surface-2);
+  border-color: #ffffff3d;
+}
+
+.btn-quiet {
+  background: transparent;
+  color: var(--color-mid);
+  height: 32px;
+  padding: 0 10px;
+  font-weight: 500;
+}
+.btn-quiet:hover:not(:disabled) {
+  background: var(--color-surface-2);
+  color: var(--color-hi);
+}
+
+.btn-danger {
+  background: transparent;
+  color: var(--color-rose);
+  height: 32px;
+  padding: 0 10px;
+  font-weight: 500;
+}
+.btn-danger:hover:not(:disabled) {
+  background: rgba(255, 111, 111, 0.12);
+}
+
+.btn-sm {
+  height: 32px;
+  padding: 0 12px;
+  font-size: 12.5px;
+}
+
+/* ---------------- поля ---------------- */
+
+.field {
+  width: 100%;
+  background: var(--color-canvas-2);
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
+  padding: 10px 13px;
+  font-size: 14px;
+  color: var(--color-hi);
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    background 0.16s ease;
+}
+.field::placeholder {
+  color: var(--color-lo);
+}
+.field:focus {
+  outline: none;
+  background: var(--color-surface);
+  border-color: rgba(214, 248, 76, 0.55);
+  box-shadow: 0 0 0 3px rgba(214, 248, 76, 0.12);
+}
+textarea.field {
+  resize: vertical;
+  line-height: 1.65;
+}
+select.field {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%2398a1a8' stroke-width='1.6'%3E%3Cpath d='M1 1.5 6 6.5l5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 13px center;
+  padding-right: 34px;
+}
+
+.label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-mid);
+  margin-bottom: 7px;
+}
+
+/* ---------------- бейджі ---------------- */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 999px;
+  border: 1px solid;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.badge-dot::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 99px;
+  background: currentColor;
+}
+
+.badge-neutral {
+  color: var(--color-mid);
+  border-color: var(--color-line-strong);
+  background: #ffffff08;
+}
+.badge-accent {
+  color: var(--color-accent);
+  border-color: #d6f84c40;
+  background: var(--color-accent-soft);
+}
+.badge-emerald {
+  color: var(--color-emerald);
+  border-color: #48dba240;
+  background: #48dba21a;
+}
+.badge-amber {
+  color: var(--color-amber);
+  border-color: #f5b84140;
+  background: #f5b8411a;
+}
+.badge-rose {
+  color: var(--color-rose);
+  border-color: #ff6f6f40;
+  background: #ff6f6f1a;
+}
+.badge-cyan {
+  color: var(--color-cyan);
+  border-color: #5cc3ff40;
+  background: #5cc3ff1a;
+}
+.badge-violet {
+  color: var(--color-violet);
+  border-color: #b09cff40;
+  background: #b09cff1a;
+}
+
+/* ---------------- таблиця ---------------- */
+
+.tbl {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.tbl thead th {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-lo);
+  text-align: left;
+  padding: 13px 20px;
+  border-bottom: 1px solid var(--color-line);
+  background: var(--color-canvas-2);
+  white-space: nowrap;
+}
+.tbl tbody td {
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--color-line);
+  font-size: 14px;
+  vertical-align: middle;
+}
+.tbl tbody tr:last-child td {
+  border-bottom: 0;
+}
+.tbl tbody tr {
+  transition: background 0.14s ease;
+}
+.tbl tbody tr:hover {
+  background: #ffffff06;
+}
+/* акцентна засічка зліва при наведенні */
+.tbl tbody tr td:first-child {
+  position: relative;
+}
+.tbl tbody tr td:first-child::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-accent);
+  opacity: 0;
+  transition: opacity 0.14s ease;
+}
+.tbl tbody tr:hover td:first-child::before {
+  opacity: 1;
+}
+
+/* ---------------- markdown із БД ---------------- */
+
+.md {
+  font-size: 13.5px;
+  line-height: 1.72;
+  color: var(--color-mid);
+}
+
+.md > *:first-child {
+  margin-top: 0;
+}
+.md > *:last-child {
+  margin-bottom: 0;
+}
+
+.md p {
+  margin: 0.7em 0;
+}
+
+/* «**Хук (0-3 сек):**» — мітка поля, а не просто жирний текст */
+.md strong {
+  color: var(--color-hi);
+  font-weight: 600;
+}
+
+.md em {
+  color: var(--color-hi);
+  font-style: italic;
+}
+
+.md a {
+  color: var(--color-cyan);
+  text-decoration: underline;
+  text-decoration-color: #5cc3ff59;
+  text-underline-offset: 2px;
+  overflow-wrap: anywhere;
+  transition: text-decoration-color 0.16s ease;
+}
+.md a:hover {
+  text-decoration-color: var(--color-cyan);
+}
+
+.md ul,
+.md ol {
+  margin: 0.7em 0;
+  padding-left: 1.35em;
+}
+.md ul {
+  list-style: none;
+  padding-left: 1.1em;
+}
+.md ul > li::before {
+  content: "";
+  position: absolute;
+  left: -0.95em;
+  top: 0.72em;
+  width: 4px;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--color-accent);
+  opacity: 0.75;
+}
+.md ol {
+  list-style: none;
+  counter-reset: md-ol;
+}
+.md ol > li {
+  counter-increment: md-ol;
+}
+.md ol > li::before {
+  content: counter(md-ol);
+  position: absolute;
+  left: -1.35em;
+  top: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.9;
+  color: var(--color-accent);
+  opacity: 0.8;
+}
+.md li {
+  position: relative;
+  margin: 0.24em 0;
+}
+
+.md h1,
+.md h2,
+.md h3,
+.md h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-hi);
+  margin: 1.3em 0 0.5em;
+}
+.md h1 {
+  font-size: 17px;
+}
+.md h2 {
+  font-size: 15.5px;
+}
+.md h3,
+.md h4 {
+  font-size: 14px;
+}
+
+.md code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--color-canvas-2);
+  border: 1px solid var(--color-line);
+  border-radius: 5px;
+  padding: 0.1em 0.36em;
+  color: var(--color-hi);
+}
+
+.md pre {
+  background: var(--color-canvas-2);
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
+  padding: 12px 14px;
+  overflow-x: auto;
+  margin: 0.8em 0;
+}
+.md pre code {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: 12px;
+}
+
+.md blockquote {
+  margin: 0.8em 0;
+  padding: 0.15em 0 0.15em 0.9em;
+  border-left: 2px solid var(--color-line-strong);
+  color: var(--color-lo);
+}
+
+.md hr {
+  margin: 1.2em 0;
+  border: 0;
+  border-top: 1px solid var(--color-line);
+}
+
+.md table {
+  width: 100%;
+  margin: 0.9em 0;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+.md th,
+.md td {
+  border: 1px solid var(--color-line);
+  padding: 7px 10px;
+  text-align: left;
+}
+.md th {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-lo);
+  background: var(--color-canvas-2);
+}
+
+/* ---------------- анімації ---------------- */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise {
+  animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(214, 248, 76, 0.5);
+  }
+  50% {
+    opacity: 0.65;
+    box-shadow: 0 0 0 5px rgba(214, 248, 76, 0);
+  }
+}
+
+.rec-dot {
+  animation: pulse-dot 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* доступність фокусу */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
