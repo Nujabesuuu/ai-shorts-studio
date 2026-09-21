@@ -5,7 +5,8 @@ to a subtitled, brand-aligned vertical video that waits for a human to approve i
 
 > **Educational project** built during the AI agent orchestration course by Upflame.
 > The workflows run on Dify; the admin panel is a Next.js app on top of Supabase.
-> The seed data in this repository is synthetic.
+> The demo data is a curated subset of the real course run (3 projects, 4 videos and the trends,
+> topics and content behind them).
 
 <p align="center">
   <img src="docs/media/admin-walkthrough.gif" alt="Admin panel walkthrough" width="720">
@@ -81,7 +82,7 @@ Requires Node.js 20.9+ and a free [Supabase](https://supabase.com) project.
 
 **1. Database.** In the Supabase SQL editor run
 [`supabase/migrations/20260921000000_init.sql`](supabase/migrations/20260921000000_init.sql),
-then [`supabase/seed.sql`](supabase/seed.sql) for synthetic demo data. Details are in
+then [`supabase/seed.sql`](supabase/seed.sql) for the demo data. Details are in
 [`supabase/README.md`](supabase/README.md).
 
 **2. Admin panel.**
