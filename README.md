@@ -8,6 +8,14 @@
 
 **Стек:** Next.js 16 (App Router, Turbopack) · React 19 · TypeScript · Tailwind CSS v4 · Supabase JS v2
 
+## Флоу Day 4 у Dify
+
+Зі сценарію Day 3 → бренд-бук через RAG (можна вимкнути перемикачем для порівняння) →
+4 межові кадри → 3 сегменти Veo 3.1 → VTT-субтитри → рядок у `day4_videos` → затвердження
+людиною в адмінці. 29 нод, DSL — [`dify/day4_video.public.yml`](dify/day4_video.public.yml).
+
+![Workflow Day 4 у Dify](docs/screenshots/day4-dify-workflow.png)
+
 ---
 
 ## Швидкий старт
