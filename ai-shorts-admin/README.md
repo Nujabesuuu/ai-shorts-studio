@@ -1,10 +1,10 @@
 # ai-shorts-admin
 
-Next.js-застосунок адмін-панелі. Повна документація — у [`../README.md`](../README.md).
+Next.js admin panel for AI Shorts Studio. Setup, architecture and the pipeline it manages are
+described in the [repository README](../README.md).
 
 ```bash
+cp .env.example .env.local   # Supabase URL and publishable key
 npm install
-npm run dev     # http://localhost:3000
+npm run dev                  # http://localhost:3000
 ```
-
-Потрібен `.env.local` з `NEXT_PUBLIC_SUPABASE_URL` і `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.

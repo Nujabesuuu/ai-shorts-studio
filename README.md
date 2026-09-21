@@ -1,191 +1,140 @@
-# AI Shorts Studio — адмін-панель
+# AI Shorts Studio
 
-Панель керування пайплайном коротких відео: ніші → тренди Day 1 → теми Day 2 з ручним
-затвердженням → готовий до публікації контент Day 3.
-Дані живуть у Supabase, пишуться туди Dify-флоу, а панель дає їх переглядати й редагувати руками.
+Admin console and agent workflows for a short-form video content pipeline: from trend research
+to a subtitled, brand-aligned vertical video that waits for a human to approve it.
 
-Здача Day 3 (декомпозиція, DSL, таблиця «до/після», рефлексія) — у [DELIVERY.md](DELIVERY.md).
+> **Educational project** built during the AI agent orchestration course by Upflame.
+> The workflows run on Dify; the admin panel is a Next.js app on top of Supabase.
+> The seed data in this repository is synthetic.
 
-**Стек:** Next.js 16 (App Router, Turbopack) · React 19 · TypeScript · Tailwind CSS v4 · Supabase JS v2
+<p align="center">
+  <img src="docs/media/admin-walkthrough.gif" alt="Admin panel walkthrough" width="720">
+</p>
 
-## Флоу Day 4 у Dify
+The Day 4 workflow in Dify:
 
-Зі сценарію Day 3 → бренд-бук через RAG (можна вимкнути перемикачем для порівняння) →
-4 межові кадри → 3 сегменти Veo 3.1 → VTT-субтитри → рядок у `day4_videos` → затвердження
-людиною в адмінці. 29 нод, DSL — [`dify/day4_video.public.yml`](dify/day4_video.public.yml).
+![Day 4 workflow in Dify](docs/screenshots/day4-dify-workflow.png)
 
-![Workflow Day 4 у Dify](docs/screenshots/day4-dify-workflow.png)
+## Pipeline
 
----
+| Stage | What happens | Output |
+|---|---|---|
+| **Day 1** · Trends | Research trends for a niche | `day1_trends` |
+| **Day 2** · Topics | Turn trends into topics; a human approves or rejects each one | `day2_topics` |
+| **Day 3** · Content | Producer, critic and repair agents write scripts, captions and hooks | `day3_content` |
+| **Day 4** · Video | Brand book (RAG) → boundary frames → 3 Veo 3.1 segments → VTT subtitles → approval queue | `day4_videos` |
 
-## Швидкий старт
+The admin panel reads and edits every stage, shows the quality rubric with its evidence, and hosts
+the approval gates.
 
-Потрібен **Node.js 20.9+** (перевірити: `node -v`) і безкоштовний проєкт на [Supabase](https://supabase.com).
+## Highlights
+
+- **Human-in-the-loop gates.** Topics (Day 2) and finished videos (Day 4) wait in a pending state
+  until a person approves them in the admin panel.
+- **Independent critic.** Content is scored by a separate agent that cites evidence from the text.
+  The weighted score is computed in a code node, not by a model, and capped unless evidence is quoted.
+- **Write verification.** A dedicated node reads back what the flow claims to have saved. It caught
+  a flow that generated 3 items but stored 2, and a Telegram payload that failed to parse.
+- **Measured optimisation.** Every flow version is benchmarked through the Dify API (see below).
+- **RAG comparison.** The Day 4 flow has a switch that runs the same script with or without the
+  brand book, so the difference is visible side by side.
+- **Deterministic work stays out of the LLM.** Niche matching, deduplication, scoring and bulk
+  insert run in code nodes and cost no tokens.
+
+## Benchmark
+
+Median over runs; numbers come from Dify tracing and the API, not from estimates.
+
+| Version | Change | Tokens | Time, s | Score |
+|---|---|---|---|---|
+| `baseline` | full-context prompts, critic rewrites the object, 3 LLM calls per item | 21,574 | 166.3 | 94.0 ⚠ |
+| `iter1` | pipeline with parallel iteration, LLM agent writes rows | 37,839 | 32.3 | 81.8 |
+| `final` | compact brief, critic only scores, targeted repair, bulk insert | **18,887** (−12.5 %) | **11.3** (−93.2 %) | 84.4 |
+
+The time target was met. The token target (−30 %) was not: repair was needed for every item in the
+final run, so the conditional skip of the third LLM call never triggered.
+⚠ Baseline scores its own output, so 94.0 and 84.4 are not on the same scale. The full analysis
+is in [DELIVERY.md](DELIVERY.md).
+
+## Tech stack
+
+Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · Supabase (Postgres, JS v2) ·
+Dify workflows · Gemini and Veo 3.1 · Python for DSL generation and tests
+
+## Repository layout
+
+```
+ai-shorts-studio/
+├── ai-shorts-admin/   Next.js admin panel (app/, components/, lib/, scripts/)
+├── dify/              DSL generators, validator, code-node tests, exported *.public.yml flows
+├── supabase/          migration, demo seed, read-only policies
+├── docs/              design spec, Day 3 and Day 4 materials, screenshots
+└── DELIVERY.md        course deliverable: decomposition, benchmark, reflection
+```
+
+The Dify flows are generated from a shared source (`dify/build_dsl.py`), so the baseline and final
+versions differ only in what the benchmark claims they differ in.
+
+## Getting started
+
+Requires Node.js 20.9+ and a free [Supabase](https://supabase.com) project.
+
+**1. Database.** In the Supabase SQL editor run
+[`supabase/migrations/20260921000000_init.sql`](supabase/migrations/20260921000000_init.sql),
+then [`supabase/seed.sql`](supabase/seed.sql) for synthetic demo data. Details are in
+[`supabase/README.md`](supabase/README.md).
+
+**2. Admin panel.**
 
 ```bash
 cd ai-shorts-admin
-cp .env.example .env.local      # впишіть URL і publishable-ключ свого Supabase
-npm install && npm run dev
+cp .env.example .env.local   # add your Supabase URL and publishable key
+npm install
+npm run dev                  # http://localhost:3000
 ```
 
-Відкрити http://localhost:3000
+Use the publishable key, not the service role key. Restart the dev server after editing `.env.local`.
 
-**База даних.** У Supabase → SQL Editor виконайте по черзі
-[`supabase/migrations/20260921000000_init.sql`](supabase/migrations/20260921000000_init.sql) і
-[`supabase/seed.sql`](supabase/seed.sql). Сід містить синтетичні демо-дані: два проєкти, повний
-ланцюг Day 1–4 і три прогони бенчмарку. Деталі — в [`supabase/README.md`](supabase/README.md).
+**3. Dify flows (optional).** Import `dify/day3_final.public.yml` or `dify/day4_video.public.yml`
+in Dify Studio, fill in the environment variables (`SUPABASE_URL`, `SUPABASE_KEY`,
+`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`), attach your own knowledge base to the brand-book node
+and publish.
 
-Ключі: **Supabase → Settings → API Keys** (потрібен саме *publishable*, не service role).
-Після зміни `.env.local` перезапустіть `npm run dev` — Next читає env лише на старті.
+### Commands
 
-## Команди
+Run from `ai-shorts-admin/` unless noted.
 
-| Команда | Що робить |
+| Command | Purpose |
 |---|---|
-| `npm run dev` | dev-сервер на :3000 |
-| `npm run build` | продакшн-збірка |
-| `npm start` | запуск продакшн-збірки (спершу `build`) |
+| `npm run dev` / `build` / `start` | development server, production build, run the build |
 | `npm run lint` | ESLint |
-| `npm run bench -- --all --runs 3` | прогони флоу Day 3 через Dify API + запис метрик у `day3_runs` |
-| `npm run bot` | Telegram-міст: бот-тригер флоу (`/gen`) |
-| `npm run dsl` | перегенерувати й перевірити Dify DSL |
-| `npx tsc --noEmit` | перевірка типів |
+| `npm run bench -- --all --runs 3` | run the Day 3 flows through the Dify API and record metrics |
+| `npm run bot` | Telegram bot that triggers a flow with `/gen` |
+| `npm run dsl` | regenerate and validate the Dify DSL files |
+| `python3 dify/test_code_nodes.py` | tests for the Day 3 code nodes (from the repo root) |
 
-> ⚠️ Не запускай `npm run build`, поки працює `npm run dev` — вони ділять теку `.next`, і HMR після цього ламається (CSS перестає перекомпільовуватись). Якщо таке сталося: зупини сервер, видали `.next`, запусти `npm run dev` знову.
+## Public demo mode
 
-## Структура БД
+The publishable key ships to the browser. For a public deployment, run
+[`supabase/policies_demo_readonly.sql`](supabase/policies_demo_readonly.sql) so the database is
+read-only, and set `NEXT_PUBLIC_DEMO_MODE=true` to show a notice in the header. Reading works
+everywhere; forms and approval buttons do not save anything in this mode.
 
-Панель працює з шістьма таблицями (RLS вимкнено — workshop-режим, окремий логін не потрібен):
+When deploying to Vercel, set the project root to `ai-shorts-admin`.
 
-```
-projects        id · niche · created_at
-   │
-   ├── day1_trends   project_id · run_id · niche · platform · title ·
-   │                 description · hook_idea · format · hashtags[] · created_at
-   │                     ▲   ▲
-   ├── day2_topics   project_id · run_id · niche · platform · title · text ·
-   │                 source_trend_id ─┘   │ · status · created_at
-   │                     ▲                │
-   └── day3_content  project_id · topic_id ┘ · source_trend_id ┘ · run_id ·
-                     format(reels|carousel|stories) · title · hook · hook_alt ·
-                     script(jsonb) · onscreen_text · caption · hashtags[] · cta ·
-                     duration_sec · quality(jsonb) · quality_score · repaired ·
-                     status(ready|needs_review|rejected) · model · flow_version
+## Security notes
 
-day3_runs       бенчмарк прогонів: flow_version · attempt · total_tokens ·
-   │            elapsed_sec · items_produced · avg_quality · by_criterion(jsonb)
-   └── day3_run_nodes   розклад токенів і часу по нодах одного прогону
-```
+- No secrets in the repository. The DSL generators read them from the environment or from
+  `ai-shorts-admin/.env.local`; the exported `*.public.yml` files have empty credentials.
+- Row-level security is **off** in the default schema (workshop mode: Dify writes with the
+  publishable key). Enable the read-only policies for anything public, and add authentication
+  plus proper policies before using this with real data.
 
-Особливості, які варто знати:
+## Documentation
 
-- **Один тренд = один рядок** у `day1_trends` (не jsonb-масив).
-- `run_id` можна лишати порожнім — спрацює `gen_random_uuid()` на боці БД.
-- `hashtags` — це `text[]`; у формі вводяться рядком через пробіл/кому й конвертуються автоматично.
-- `day1_trends` видаляються **каскадом** разом із проєктом, а `day2_topics` — ні, тому панель знімає їх сама.
-- Тренд, на який посилається тема Day 2, видалити не можна — панель покаже зрозуміле повідомлення замість помилки.
-- `text` і `description` рендеряться як **markdown** (жирний, списки, посилання).
+Course materials are in Ukrainian.
 
-## Маршрути
-
-| Шлях | Що там |
-|---|---|
-| `/` | дашборд: метрики, розподіл за платформами, активність, таблиця проєктів |
-| `/projects/new`, `/projects/[id]/edit` | створення / редагування ніші |
-| `/projects/[id]` | картка проєкту: тренди Day 1, теми Day 2, HITL-кнопки |
-| `/projects/[id]/day1/new`, `/day1/[recordId]/edit` | CRUD трендів |
-| `/projects/[id]/day2/new`, `/day2/[recordId]/edit` | CRUD тем |
-| `/trends`, `/topics` | глобальні реєстри з пошуком по всіх проєктах |
-| `/content` | реєстр Day 3: фільтри за форматом і статусом, пошук |
-| `/content/[id]` | картка контенту: розкадровка з таймкодами, A/B-хуки, рубрика з доказами, ланцюг тренд → тема → контент |
-| `/projects/[id]/day3/new`, `/day3/[recordId]/edit` | CRUD контенту |
-| `/runs` | бенчмарк прогонів: таблиця «до/після», токени по нодах, покритерійна якість |
-
-## HITL-гейт (Day 2)
-
-**HITL** = *Human-in-the-Loop*, «людина в контурі». Це точка в автоматичному пайплайні, де
-робота зупиняється й чекає рішення людини, замість того щоб їхати далі самотужки.
-
-Навіщо: модель генерує теми пачками й іноді видає нерелевантне, юридично ризиковане або
-просто нудне. Дешевше відсіяти це на етапі теми (рядок тексту), ніж після зйомки відео.
-
-Як це влаштовано тут: колонка `day2_topics.status`.
-
-| Статус | Значення |
-|---|---|
-| `draft` | чернетка, ще не на розгляді |
-| `pending` | **чекає на рішення людини** — це і є гейт |
-| `approved` | затверджено, можна брати в роботу |
-| `rejected` | відхилено |
-
-На картці проєкту в кожної теми є кнопки **Затвердити / Відхилити / Повернути на розгляд** —
-вони міняють `status` через Server Action. На дашборді є окремий блок «Чекають на гейт»,
-щоб не шукати незатверджене вручну, і лічильник «Затверджено N з M».
-
-## Структура коду
-
-```
-admin-panel-2/
-├── dify/
-│   ├── build_dsl.py          генератор DSL: baseline і final зі спільного джерела
-│   ├── validate_dsl.py       перевірка графа, посилань, схем, секретів
-│   ├── test_code_nodes.py    прогін python-нод локально на справжніх даних
-│   ├── config.py             ключі з env / .env.local (у коді їх немає)
-│   └── *.public.yml          артефакти на здачу (без секретів)
-├── docs/specs/               дизайн-спека Day 3
-├── supabase/                 міграція, демо-сід, політики read-only
-├── DELIVERY.md               здача: декомпозиція, «до/після», рефлексія
-└── ai-shorts-admin/
-    ├── app/
-    │   ├── page.tsx              дашборд
-    │   ├── layout.tsx            шрифти + оболонка
-    │   ├── globals.css           дизайн-система (токени, компоненти, markdown)
-    │   ├── actions/              Server Actions: projects.ts, day1.ts, day2.ts, day3.ts
-    │   ├── projects/             CRUD-сторінки
-    │   ├── trends/, topics/      глобальні реєстри Day 1 / Day 2
-    │   ├── content/              реєстр і картка контенту Day 3
-    │   ├── runs/                 бенчмарк прогонів
-    │   └── error.tsx, not-found.tsx, loading.tsx
-    ├── components/           Sidebar, ui.tsx, форми, Markdown, DeleteButton,
-    │                         ScriptTimeline (розкадровка), Rubric (бали з доказами)
-    ├── scripts/              bench.mjs (метрики з Dify API), telegram-bot.mjs, lib.mjs
-    └── lib/
-        ├── supabase.ts       createClient()
-        ├── db.ts             типи таблиць, рубрика, бейджі, форматування
-        └── form-state.ts     спільний тип стану форм
-```
-
-Валідація й запис — у Server Actions; сторінки лишаються Server Components і читають БД напряму.
-Форми — клієнтські лише через `useActionState` (щоб показувати помилки без перезавантаження).
-
-## Деплой на Vercel
-
-1. Імпортувати репозиторій, **Root Directory** → `ai-shorts-admin`.
-2. Додати ті самі дві env-змінні.
-3. Deploy.
-
-## Безпека
-
-RLS вимкнено на **всіх шести** таблицях — будь-хто з publishable-ключем може читати й
-змінювати всі рядки. Для воркшопу так і задумано. Для чогось реального треба вмикати RLS
-**разом із політиками** (без політик доступ відріже повністю) і додавати логін через
-Supabase Auth.
-
-```sql
-alter table public.projects      enable row level security;
-alter table public.day1_trends   enable row level security;
-alter table public.day2_topics   enable row level security;
-alter table public.day3_content  enable row level security;
-alter table public.day3_runs     enable row level security;
-alter table public.day3_run_nodes enable row level security;
--- + політики під потрібну роль
-```
-
-Секрети (Telegram-токен, ключі Dify і Supabase) лежать у `ai-shorts-admin/.env.local` (шаблон —
-`.env.example`) і в `environment_variables` Dify. У репозиторії їх немає: генератори DSL
-читають значення з env або з `.env.local` (`dify/config.py`). У `dify/*.public.yml` змінні
-порожні, а `chat_id` замінено заглушкою `YOUR_TELEGRAM_CHAT_ID` — заповніть їх у Dify Studio
-після імпорту. Версії з підставленими ключами (`dify/*.yml` без `.public`) у `.gitignore`.
-
-Для публічного демо застосуйте `supabase/policies_demo_readonly.sql` (база лише для читання)
-і виставте `NEXT_PUBLIC_DEMO_MODE=true` — у шапці зʼявиться плашка «лише перегляд».
+- [DELIVERY.md](DELIVERY.md) — Day 3: decomposition, rubric, benchmark, defects caught, reflection
+- [docs/specs](docs/specs) — Day 3 flow design
+- [docs/day4-instructions.md](docs/day4-instructions.md) — Day 4 setup and the RAG on/off comparison
+- [supabase/README.md](supabase/README.md) — database setup and demo policies
