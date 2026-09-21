@@ -1,0 +1,2240 @@
+app:
+  description: 'Перша робоча версія для точки відліку: повний дамп контексту в промпт, три виклики LLM на кожну одиницю завжди, критик переписує
+    обʼєкт цілком. Існує лише щоб було з чим порівнювати фінал.'
+  icon: 🧪
+  icon_background: '#FFEAD5'
+  icon_type: emoji
+  mode: workflow
+  name: Day3 · BASELINE (генератор → критик-переписувач → коректор)
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/gemini:0.9.5@fc6c7d17b0852db57e2958a4051b9c5c517ba7934c43df8536c43b9ecbded514
+    version: null
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/supabase:0.1.5@c841812a6a53609af8fa16e0ce238399b447ca797637d7d4cbdc57c8c1058275
+    version: null
+kind: app
+version: 0.7.0
+workflow:
+  conversation_variables: []
+  environment_variables:
+  - description: Токен бота від @BotFather. Порожній -> нотифікації просто не надсилаються.
+    id: e0b7c1a2-0000-4000-9000-000000000103
+    name: TELEGRAM_BOT_TOKEN
+    selector:
+    - env
+    - TELEGRAM_BOT_TOKEN
+    value: ''
+    value_type: string
+  - description: ID чату, куди слати звіт про прогін.
+    id: e0b7c1a2-0000-4000-9000-000000000104
+    name: TELEGRAM_CHAT_ID
+    selector:
+    - env
+    - TELEGRAM_CHAT_ID
+    value: ''
+    value_type: string
+  - description: URL проєкту Supabase, напр. https://xxxx.supabase.co (без / у кінці).
+    id: e0b7c1a2-0000-4000-9000-000000000105
+    name: SUPABASE_URL
+    selector:
+    - env
+    - SUPABASE_URL
+    value: ''
+    value_type: string
+  - description: Publishable-ключ Supabase. RLS вимкнено, тому цього достатньо для вставки.
+    id: e0b7c1a2-0000-4000-9000-000000000106
+    name: SUPABASE_KEY
+    selector:
+    - env
+    - SUPABASE_KEY
+    value: ''
+    value_type: string
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 50
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        knowledge_file_size_limit: 15
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: tool
+      id: 1787000000001-source-1787000000002-target
+      source: '1787000000001'
+      sourceHandle: source
+      target: '1787000000002'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: tool
+        targetType: code
+      id: 1787000000002-source-1787000000003-target
+      source: '1787000000002'
+      sourceHandle: source
+      target: '1787000000003'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: tool
+      id: 1787000000003-source-1787000000004-target
+      source: '1787000000003'
+      sourceHandle: source
+      target: '1787000000004'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: tool
+        targetType: tool
+      id: 1787000000004-source-1787000000005-target
+      source: '1787000000004'
+      sourceHandle: source
+      target: '1787000000005'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: tool
+        targetType: tool
+      id: 1787000000005-source-1787000000006-target
+      source: '1787000000005'
+      sourceHandle: source
+      target: '1787000000006'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: tool
+        targetType: code
+      id: 1787000000006-source-1787000000007-target
+      source: '1787000000006'
+      sourceHandle: source
+      target: '1787000000007'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: iteration
+      id: 1787000000007-source-1787000000008-target
+      source: '1787000000007'
+      sourceHandle: source
+      target: '1787000000008'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1787000000008'
+        sourceType: iteration-start
+        targetType: template-transform
+      id: 1787000000008start-source-1787000000009-target
+      source: 1787000000008start
+      sourceHandle: source
+      target: '1787000000009'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1787000000008'
+        sourceType: template-transform
+        targetType: llm
+      id: 1787000000009-source-1787000000010-target
+      source: '1787000000009'
+      sourceHandle: source
+      target: '1787000000010'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1787000000008'
+        sourceType: llm
+        targetType: llm
+      id: 1787000000010-source-1787000000011-target
+      source: '1787000000010'
+      sourceHandle: source
+      target: '1787000000011'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1787000000008'
+        sourceType: llm
+        targetType: llm
+      id: 1787000000011-source-1787000000024-target
+      source: '1787000000011'
+      sourceHandle: source
+      target: '1787000000024'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: iteration
+        targetType: code
+      id: 1787000000008-source-1787000000016-target
+      source: '1787000000008'
+      sourceHandle: source
+      target: '1787000000016'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: if-else
+      id: 1787000000016-source-1787000000017-target
+      source: '1787000000016'
+      sourceHandle: source
+      target: '1787000000017'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: http-request
+      id: 1787000000017-true-1787000000018-target
+      source: '1787000000017'
+      sourceHandle: 'true'
+      target: '1787000000018'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: tool
+      id: 1787000000018-source-1787000000019-target
+      source: '1787000000018'
+      sourceHandle: source
+      target: '1787000000019'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: tool
+        targetType: code
+      id: 1787000000019-source-1787000000020-target
+      source: '1787000000019'
+      sourceHandle: source
+      target: '1787000000020'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: http-request
+      id: 1787000000020-source-1787000000021-target
+      source: '1787000000020'
+      sourceHandle: source
+      target: '1787000000021'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: end
+      id: 1787000000021-source-1787000000022-target
+      source: '1787000000021'
+      sourceHandle: source
+      target: '1787000000022'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: end
+      id: 1787000000017-false-1787000000023-target
+      source: '1787000000017'
+      sourceHandle: 'false'
+      target: '1787000000023'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: Start
+        type: start
+        variables:
+        - default: спешелті-кав'ярня в Києві
+          label: Ніша — визначає, чиї теми й тренди беремо
+          max_length: 120
+          options: []
+          required: false
+          type: text-input
+          variable: niche
+        - default: instagram
+          label: Платформа
+          max_length: 48
+          options:
+          - instagram
+          - tiktok
+          - youtube
+          required: false
+          type: select
+          variable: platform
+        - default: reels,carousel,stories
+          label: Формати через кому
+          max_length: 64
+          options: []
+          required: false
+          type: text-input
+          variable: formats
+        - default: 4
+          label: Скільки одиниць контенту згенерувати
+          max_length: 48
+          options: []
+          required: false
+          type: number
+          variable: n_items
+        - default: final
+          label: Мітка прогону для бенчмарку
+          max_length: 24
+          options:
+          - baseline
+          - iter1
+          - iter2
+          - final
+          required: false
+          type: select
+          variable: flow_version
+      height: 180
+      id: '1787000000001'
+      position:
+        x: 40
+        y: 480
+      positionAbsolute:
+        x: 40
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        default_value:
+        - key: text
+          type: string
+          value: ''
+        - key: json
+          type: array[object]
+          value: '[]'
+        desc: Усі проєкти — щоб зіставити введену нішу з наявними.
+        error_strategy: default-value
+        is_team_authorization: true
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: The name of the table to query.
+            ja_JP: The name of the table to query.
+            pt_BR: The name of the table to query.
+            zh_Hans: The name of the table to query.
+          input_schema: null
+          label:
+            en_US: Table
+            ja_JP: Table
+            pt_BR: Table
+            zh_Hans: Table
+          llm_description: Provide the name of the table you want to query in Supabase.
+          max: null
+          min: null
+          multiple: false
+          name: table
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Maximum number of rows to return.
+            ja_JP: Maximum number of rows to return.
+            pt_BR: Maximum number of rows to return.
+            zh_Hans: Maximum number of rows to return.
+          input_schema: null
+          label:
+            en_US: Limit
+            ja_JP: Limit
+            pt_BR: Limit
+            zh_Hans: Limit
+          llm_description: Specify how many rows you want to retrieve. Default is 10.
+          max: null
+          min: null
+          multiple: false
+          name: limit
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: number
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Optional filter condition (e.g., 'status=active').
+            ja_JP: Optional filter condition (e.g., 'status=active').
+            pt_BR: Optional filter condition (e.g., 'status=active').
+            zh_Hans: Optional filter condition (e.g., 'status=active').
+          input_schema: null
+          label:
+            en_US: Filter
+            ja_JP: Filter
+            pt_BR: Filter
+            zh_Hans: Filter
+          llm_description: Provide a filter condition if needed. (e.g., 'status=active')
+          max: null
+          min: null
+          multiple: false
+          name: filter
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        params:
+          filter: ''
+          limit: ''
+          table: ''
+        plugin_id: langgenius/supabase
+        plugin_unique_identifier: langgenius/supabase:0.1.5@c841812a6a53609af8fa16e0ce238399b447ca797637d7d4cbdc57c8c1058275
+        provider_icon: https://cloud.dify.ai/console/api/workspaces/current/plugin/icon?tenant_id=67bfc09d-1d97-4c21-b4e7-fbb1e72f685b&filename=6239d130d5b7cbd43ca28b8fc2c08cccbe1440495aae395a8b8c31f0a086c149.svg
+        provider_id: langgenius/supabase/supabase
+        provider_name: langgenius/supabase/supabase
+        provider_show_name: Supabase
+        provider_type: builtin
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        title: Get Rows (projects)
+        tool_configurations: {}
+        tool_description: Get rows from a specified table in Supabase.
+        tool_label: Get Rows
+        tool_name: get_rows
+        tool_node_version: '2'
+        tool_parameters:
+          filter:
+            type: mixed
+            value: ''
+          limit:
+            type: constant
+            value: 100
+          table:
+            type: mixed
+            value: projects
+        type: tool
+      height: 87
+      id: '1787000000002'
+      position:
+        x: 340
+        y: 480
+      positionAbsolute:
+        x: 340
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+      zIndex: 0
+    - data:
+        code: "\nimport re\n\nUUID_RE = re.compile(\n    r\"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-\"\n    r\"[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$\"\
+          \n)\n\n\ndef _norm(s):\n    return re.sub(r\"[^0-9a-zа-яїієґё]+\", \"\", str(s or \"\").lower())\n\n\ndef _tri(s):\n    n = _norm(s)\n\
+          \    if len(n) < 3:\n        return {n} if n else set()\n    return {n[i:i + 3] for i in range(len(n) - 2)}\n\n\ndef _similarity(a,\
+          \ b):\n    na, nb = _norm(a), _norm(b)\n    if not na or not nb:\n        return 0.0\n    if na == nb:\n        return 1.0\n    if len(na)\
+          \ >= 4 and na in nb:\n        return 1.0\n    if len(nb) >= 4 and nb in na:\n        return 1.0\n    ta, tb = _tri(a), _tri(b)\n   \
+          \ if not ta or not tb:\n        return 0.0\n    short = ta if len(ta) <= len(tb) else tb\n    return len(ta & tb) / float(len(short))\n\
+          \ndef _collect(src):\n    \"\"\"Розгортає обгортку {\"data\": [...]}, яку плагін іноді додає навколо рядків.\"\"\"\n    rows = []\n\
+          \    if isinstance(src, dict):\n        src = [src]\n    if not isinstance(src, list):\n        return rows\n    for el in src:\n  \
+          \      if not isinstance(el, dict):\n            continue\n        data = el.get(\"data\")\n        if isinstance(data, list):\n   \
+          \         rows.extend([r for r in data if isinstance(r, dict)])\n        elif isinstance(data, dict):\n            rows.append(data)\n\
+          \        elif el:\n            rows.append(el)\n    return rows\n\n\ndef _rows(js, txt):\n    \"\"\"\n    Плагін Supabase віддає рядки\
+          \ то як [{...}], то як [{\"data\":[...]}],\n    то лише текстом. Розбираємо всі три випадки — інакше флоу тихо\n    працює на порожньому\
+          \ списку і ніхто цього не помічає.\n    \"\"\"\n    import json\n    rows = _collect(js)\n    if not rows and isinstance(txt, str) and\
+          \ txt.strip().startswith((\"[\", \"{\")):\n        try:\n            rows = _collect(json.loads(txt))\n        except Exception:\n \
+          \           rows = []\n    return rows\n\nNO_MATCH_UUID = \"00000000-0000-0000-0000-000000000000\"\nMATCH_THRESHOLD = 0.5\n\n\ndef main(projects_json,\
+          \ projects_text, niche, platform):\n    projects = [p for p in _rows(projects_json, projects_text)\n                if p.get(\"id\"\
+          ) and UUID_RE.match(str(p.get(\"id\")))]\n    available = sorted({str(p.get(\"niche\") or \"\").strip()\n                        for\
+          \ p in projects if p.get(\"niche\")})\n\n    typed = (niche or \"\").strip()\n    best, best_score = None, 0.0\n    for p in projects:\n\
+          \        sc = _similarity(typed, p.get(\"niche\"))\n        if sc > best_score:\n            best, best_score = p, sc\n\n    if typed\
+          \ and best is not None and best_score >= MATCH_THRESHOLD:\n        pid = str(best[\"id\"])\n        filter_pid = pid\n        resolved\
+          \ = str(best.get(\"niche\") or typed)\n        note = (\"Ніша «%s» → проєкт «%s» (схожість %.2f).\"\n                % (typed, resolved,\
+          \ best_score))\n        matched = \"niche\"\n    else:\n        # Ніші немає серед проєктів. Флоу НЕ падає: працюємо холодним стартом.\n\
+          \        # У фільтр іде неіснуючий uuid, щоб свідомо не підтягнути чужі дані,\n        # а в рядки day3_content піде project_id = null\
+          \ (інакше впаде FK).\n        pid = \"\"\n        filter_pid = NO_MATCH_UUID\n        resolved = typed or \"не задана\"\n        note\
+          \ = (\"Ніші «%s» немає серед проєктів%s. Холодний старт: \"\n                \"контент буде збережено без привʼязки до проєкту.\"\n\
+          \                % (resolved, (\" (є: \" + \", \".join(available) + \")\") if available else \"\"))\n        matched = \"cold_start\"\
+          \n\n    plat = (platform or \"\").strip() or \"instagram\"\n\n    return {\n        \"project_id\": pid,\n        \"has_project\": \"\
+          yes\" if pid else \"no\",\n        \"niche\": resolved,\n        \"platform\": plat,\n        # Плагін Supabase робить cond.split(\"\
+          =\", 1) -> query.eq(key, value),\n        # тому формат саме 'column=value', а НЕ PostgREST 'column=eq.value'.\n        \"row_filter\"\
+          : \"project_id=\" + filter_pid,\n        \"matched_by\": matched,\n        \"resolve_note\": note,\n        \"available_niches\": \"\
+          , \".join(available) if available else \"—\",\n    }\n"
+        code_language: python3
+        desc: Знаходить проєкт за нішею; якщо його немає — холодний старт без падіння.
+        outputs:
+          available_niches:
+            children: null
+            type: string
+          has_project:
+            children: null
+            type: string
+          matched_by:
+            children: null
+            type: string
+          niche:
+            children: null
+            type: string
+          platform:
+            children: null
+            type: string
+          project_id:
+            children: null
+            type: string
+          resolve_note:
+            children: null
+            type: string
+          row_filter:
+            children: null
+            type: string
+        selected: false
+        title: Ніша → проєкт
+        type: code
+        variables:
+        - value_selector:
+          - '1787000000002'
+          - json
+          value_type: array[object]
+          variable: projects_json
+        - value_selector:
+          - '1787000000002'
+          - text
+          value_type: string
+          variable: projects_text
+        - value_selector:
+          - '1787000000001'
+          - niche
+          value_type: string
+          variable: niche
+        - value_selector:
+          - '1787000000001'
+          - platform
+          value_type: string
+          variable: platform
+      height: 51
+      id: '1787000000003'
+      position:
+        x: 640
+        y: 480
+      positionAbsolute:
+        x: 640
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+      zIndex: 0
+    - data:
+        default_value:
+        - key: text
+          type: string
+          value: ''
+        - key: json
+          type: array[object]
+          value: '[]'
+        desc: Затверджені теми Дня 2 — первинне джерело брифів.
+        error_strategy: default-value
+        is_team_authorization: true
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: The name of the table to query.
+            ja_JP: The name of the table to query.
+            pt_BR: The name of the table to query.
+            zh_Hans: The name of the table to query.
+          input_schema: null
+          label:
+            en_US: Table
+            ja_JP: Table
+            pt_BR: Table
+            zh_Hans: Table
+          llm_description: Provide the name of the table you want to query in Supabase.
+          max: null
+          min: null
+          multiple: false
+          name: table
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Maximum number of rows to return.
+            ja_JP: Maximum number of rows to return.
+            pt_BR: Maximum number of rows to return.
+            zh_Hans: Maximum number of rows to return.
+          input_schema: null
+          label:
+            en_US: Limit
+            ja_JP: Limit
+            pt_BR: Limit
+            zh_Hans: Limit
+          llm_description: Specify how many rows you want to retrieve. Default is 10.
+          max: null
+          min: null
+          multiple: false
+          name: limit
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: number
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Optional filter condition (e.g., 'status=active').
+            ja_JP: Optional filter condition (e.g., 'status=active').
+            pt_BR: Optional filter condition (e.g., 'status=active').
+            zh_Hans: Optional filter condition (e.g., 'status=active').
+          input_schema: null
+          label:
+            en_US: Filter
+            ja_JP: Filter
+            pt_BR: Filter
+            zh_Hans: Filter
+          llm_description: Provide a filter condition if needed. (e.g., 'status=active')
+          max: null
+          min: null
+          multiple: false
+          name: filter
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        params:
+          filter: ''
+          limit: ''
+          table: ''
+        plugin_id: langgenius/supabase
+        plugin_unique_identifier: langgenius/supabase:0.1.5@c841812a6a53609af8fa16e0ce238399b447ca797637d7d4cbdc57c8c1058275
+        provider_icon: https://cloud.dify.ai/console/api/workspaces/current/plugin/icon?tenant_id=67bfc09d-1d97-4c21-b4e7-fbb1e72f685b&filename=6239d130d5b7cbd43ca28b8fc2c08cccbe1440495aae395a8b8c31f0a086c149.svg
+        provider_id: langgenius/supabase/supabase
+        provider_name: langgenius/supabase/supabase
+        provider_show_name: Supabase
+        provider_type: builtin
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        title: Get Rows (day2_topics)
+        tool_configurations: {}
+        tool_description: Get rows from a specified table in Supabase.
+        tool_label: Get Rows
+        tool_name: get_rows
+        tool_node_version: '2'
+        tool_parameters:
+          filter:
+            type: mixed
+            value: '{{#1787000000003.row_filter#}}'
+          limit:
+            type: constant
+            value: 100
+          table:
+            type: mixed
+            value: day2_topics
+        type: tool
+      height: 87
+      id: '1787000000004'
+      position:
+        x: 940
+        y: 480
+      positionAbsolute:
+        x: 940
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+      zIndex: 0
+    - data:
+        default_value:
+        - key: text
+          type: string
+          value: ''
+        - key: json
+          type: array[object]
+          value: '[]'
+        desc: Тренди Дня 1 — резервне джерело, якщо тем ще немає.
+        error_strategy: default-value
+        is_team_authorization: true
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: The name of the table to query.
+            ja_JP: The name of the table to query.
+            pt_BR: The name of the table to query.
+            zh_Hans: The name of the table to query.
+          input_schema: null
+          label:
+            en_US: Table
+            ja_JP: Table
+            pt_BR: Table
+            zh_Hans: Table
+          llm_description: Provide the name of the table you want to query in Supabase.
+          max: null
+          min: null
+          multiple: false
+          name: table
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Maximum number of rows to return.
+            ja_JP: Maximum number of rows to return.
+            pt_BR: Maximum number of rows to return.
+            zh_Hans: Maximum number of rows to return.
+          input_schema: null
+          label:
+            en_US: Limit
+            ja_JP: Limit
+            pt_BR: Limit
+            zh_Hans: Limit
+          llm_description: Specify how many rows you want to retrieve. Default is 10.
+          max: null
+          min: null
+          multiple: false
+          name: limit
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: number
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Optional filter condition (e.g., 'status=active').
+            ja_JP: Optional filter condition (e.g., 'status=active').
+            pt_BR: Optional filter condition (e.g., 'status=active').
+            zh_Hans: Optional filter condition (e.g., 'status=active').
+          input_schema: null
+          label:
+            en_US: Filter
+            ja_JP: Filter
+            pt_BR: Filter
+            zh_Hans: Filter
+          llm_description: Provide a filter condition if needed. (e.g., 'status=active')
+          max: null
+          min: null
+          multiple: false
+          name: filter
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        params:
+          filter: ''
+          limit: ''
+          table: ''
+        plugin_id: langgenius/supabase
+        plugin_unique_identifier: langgenius/supabase:0.1.5@c841812a6a53609af8fa16e0ce238399b447ca797637d7d4cbdc57c8c1058275
+        provider_icon: https://cloud.dify.ai/console/api/workspaces/current/plugin/icon?tenant_id=67bfc09d-1d97-4c21-b4e7-fbb1e72f685b&filename=6239d130d5b7cbd43ca28b8fc2c08cccbe1440495aae395a8b8c31f0a086c149.svg
+        provider_id: langgenius/supabase/supabase
+        provider_name: langgenius/supabase/supabase
+        provider_show_name: Supabase
+        provider_type: builtin
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        title: Get Rows (day1_trends)
+        tool_configurations: {}
+        tool_description: Get rows from a specified table in Supabase.
+        tool_label: Get Rows
+        tool_name: get_rows
+        tool_node_version: '2'
+        tool_parameters:
+          filter:
+            type: mixed
+            value: '{{#1787000000003.row_filter#}}'
+          limit:
+            type: constant
+            value: 100
+          table:
+            type: mixed
+            value: day1_trends
+        type: tool
+      height: 87
+      id: '1787000000005'
+      position:
+        x: 1240
+        y: 480
+      positionAbsolute:
+        x: 1240
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+      zIndex: 0
+    - data:
+        default_value:
+        - key: text
+          type: string
+          value: ''
+        - key: json
+          type: array[object]
+          value: '[]'
+        desc: Уже згенерований контент — список «не повторюй» для критерію uniqueness.
+        error_strategy: default-value
+        is_team_authorization: true
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: The name of the table to query.
+            ja_JP: The name of the table to query.
+            pt_BR: The name of the table to query.
+            zh_Hans: The name of the table to query.
+          input_schema: null
+          label:
+            en_US: Table
+            ja_JP: Table
+            pt_BR: Table
+            zh_Hans: Table
+          llm_description: Provide the name of the table you want to query in Supabase.
+          max: null
+          min: null
+          multiple: false
+          name: table
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Maximum number of rows to return.
+            ja_JP: Maximum number of rows to return.
+            pt_BR: Maximum number of rows to return.
+            zh_Hans: Maximum number of rows to return.
+          input_schema: null
+          label:
+            en_US: Limit
+            ja_JP: Limit
+            pt_BR: Limit
+            zh_Hans: Limit
+          llm_description: Specify how many rows you want to retrieve. Default is 10.
+          max: null
+          min: null
+          multiple: false
+          name: limit
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: number
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Optional filter condition (e.g., 'status=active').
+            ja_JP: Optional filter condition (e.g., 'status=active').
+            pt_BR: Optional filter condition (e.g., 'status=active').
+            zh_Hans: Optional filter condition (e.g., 'status=active').
+          input_schema: null
+          label:
+            en_US: Filter
+            ja_JP: Filter
+            pt_BR: Filter
+            zh_Hans: Filter
+          llm_description: Provide a filter condition if needed. (e.g., 'status=active')
+          max: null
+          min: null
+          multiple: false
+          name: filter
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        params:
+          filter: ''
+          limit: ''
+          table: ''
+        plugin_id: langgenius/supabase
+        plugin_unique_identifier: langgenius/supabase:0.1.5@c841812a6a53609af8fa16e0ce238399b447ca797637d7d4cbdc57c8c1058275
+        provider_icon: https://cloud.dify.ai/console/api/workspaces/current/plugin/icon?tenant_id=67bfc09d-1d97-4c21-b4e7-fbb1e72f685b&filename=6239d130d5b7cbd43ca28b8fc2c08cccbe1440495aae395a8b8c31f0a086c149.svg
+        provider_id: langgenius/supabase/supabase
+        provider_name: langgenius/supabase/supabase
+        provider_show_name: Supabase
+        provider_type: builtin
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        title: Get Rows (day3_content)
+        tool_configurations: {}
+        tool_description: Get rows from a specified table in Supabase.
+        tool_label: Get Rows
+        tool_name: get_rows
+        tool_node_version: '2'
+        tool_parameters:
+          filter:
+            type: mixed
+            value: '{{#1787000000003.row_filter#}}'
+          limit:
+            type: constant
+            value: 100
+          table:
+            type: mixed
+            value: day3_content
+        type: tool
+      height: 87
+      id: '1787000000006'
+      position:
+        x: 1540
+        y: 480
+      positionAbsolute:
+        x: 1540
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+      zIndex: 0
+    - data:
+        code: "\ndef _collect(src):\n    \"\"\"Розгортає обгортку {\"data\": [...]}, яку плагін іноді додає навколо рядків.\"\"\"\n    rows =\
+          \ []\n    if isinstance(src, dict):\n        src = [src]\n    if not isinstance(src, list):\n        return rows\n    for el in src:\n\
+          \        if not isinstance(el, dict):\n            continue\n        data = el.get(\"data\")\n        if isinstance(data, list):\n \
+          \           rows.extend([r for r in data if isinstance(r, dict)])\n        elif isinstance(data, dict):\n            rows.append(data)\n\
+          \        elif el:\n            rows.append(el)\n    return rows\n\n\ndef _rows(js, txt):\n    \"\"\"\n    Плагін Supabase віддає рядки\
+          \ то як [{...}], то як [{\"data\":[...]}],\n    то лише текстом. Розбираємо всі три випадки — інакше флоу тихо\n    працює на порожньому\
+          \ списку і ніхто цього не помічає.\n    \"\"\"\n    import json\n    rows = _collect(js)\n    if not rows and isinstance(txt, str) and\
+          \ txt.strip().startswith((\"[\", \"{\")):\n        try:\n            rows = _collect(json.loads(txt))\n        except Exception:\n \
+          \           rows = []\n    return rows\n\nimport json\n\n# Холодний старт: кути подачі, а не готовий контент. Наповнення все одно\n\
+          # генерує модель під конкретну нішу — це лише каркас, щоб флоу не падав\n# на порожній базі.\nCOLD_ANGLES = [\n    {\"angle\": \"закулісся\
+          \ процесу\", \"why\": \"показати те, чого клієнт не бачить\"},\n    {\"angle\": \"поширена помилка аудиторії\", \"why\": \"корисність\
+          \ + впізнаваність\"},\n    {\"angle\": \"порівняння двох варіантів\", \"why\": \"готовий візуальний конфлікт\"},\n    {\"angle\": \"\
+          історія одного клієнта\", \"why\": \"емоція і соціальний доказ\"},\n    {\"angle\": \"розбір ціни або складу\", \"why\": \"чесність\
+          \ зчитується як довіра\"},\n]\n\n\ndef _clean(s, limit=400):\n    return str(s or \"\").strip()[:limit]\n\n\ndef main(topics_json, topics_text,\
+          \ trends_json, trends_text,\n         content_json, content_text, niche, platform, formats, n_items):\n    topics = _rows(topics_json,\
+          \ topics_text)\n    trends = _rows(trends_json, trends_text)\n    existing = _rows(content_json, content_text)\n\n    try:\n       \
+          \ want = int(float(n_items))\n    except Exception:\n        want = 4\n    want = max(1, min(want, 12))\n\n    fmt_list = [f.strip().lower()\
+          \ for f in str(formats or \"\").split(\",\") if f.strip()]\n    fmt_list = [f for f in fmt_list if f in (\"reels\", \"carousel\", \"\
+          stories\")]\n    if not fmt_list:\n        fmt_list = [\"reels\", \"carousel\", \"stories\"]\n\n    # Антидубль: назви вже наявного\
+          \ контенту + вже покриті теми/тренди.\n    banned = [str(r.get(\"title\") or \"\").strip() for r in existing if r.get(\"title\")]\n\
+          \    used_topics = {str(r.get(\"topic_id\")) for r in existing if r.get(\"topic_id\")}\n    used_trends = {str(r.get(\"source_trend_id\"\
+          )) for r in existing if r.get(\"source_trend_id\")}\n\n    briefs = []\n\n    # ── Джерело 1: затверджені теми Day 2 (основний шлях)\n\
+          \    fresh_topics = [t for t in topics\n                    if str(t.get(\"id\")) not in used_topics\n                    and str(t.get(\"\
+          status\") or \"approved\") in (\"approved\", \"ready\")]\n    source = \"\"\n    if fresh_topics:\n        source = \"day2_topics\"\n\
+          \        for i, t in enumerate(fresh_topics[:want]):\n            briefs.append({\n                \"idx\": i,\n                \"source_kind\"\
+          : \"day2_topics\",\n                \"topic_id\": str(t.get(\"id\")) if t.get(\"id\") else \"\",\n                \"trend_id\": str(t.get(\"\
+          source_trend_id\")) if t.get(\"source_trend_id\") else \"\",\n                \"seed_title\": _clean(t.get(\"title\"), 140),\n     \
+          \           \"seed_body\": _clean(t.get(\"text\")),\n                \"seed_hook\": \"\",\n                \"seed_format\": \"\",\n\
+          \            })\n\n    # ── Джерело 2: тренди Day 1 (резерв, коли Day 2 ще не проходив)\n    if not briefs:\n        fresh_trends =\
+          \ [t for t in trends if str(t.get(\"id\")) not in used_trends]\n        pool = fresh_trends or trends\n        if pool:\n          \
+          \  source = \"day1_trends\"\n            for i, t in enumerate(pool[:want]):\n                briefs.append({\n                    \"\
+          idx\": i,\n                    \"source_kind\": \"day1_trends\",\n                    \"topic_id\": \"\",\n                    \"trend_id\"\
+          : str(t.get(\"id\")) if t.get(\"id\") else \"\",\n                    \"seed_title\": _clean(t.get(\"title\"), 140),\n             \
+          \       \"seed_body\": _clean(t.get(\"description\")),\n                    \"seed_hook\": _clean(t.get(\"hook_idea\"), 200),\n    \
+          \                \"seed_format\": _clean(t.get(\"format\"), 200),\n                })\n\n    # ── Джерело 3: холодний старт (ніші немає\
+          \ в базі взагалі)\n    if not briefs:\n        source = \"cold_start\"\n        for i in range(want):\n            a = COLD_ANGLES[i\
+          \ % len(COLD_ANGLES)]\n            briefs.append({\n                \"idx\": i,\n                \"source_kind\": \"cold_start\",\n\
+          \                \"topic_id\": \"\",\n                \"trend_id\": \"\",\n                \"seed_title\": a[\"angle\"],\n         \
+          \       \"seed_body\": a[\"why\"],\n                \"seed_hook\": \"\",\n                \"seed_format\": \"\",\n            })\n\n\
+          \    # Формати роздаємо по колу — щоб один прогін давав різні типи публікацій,\n    # а не чотири однакові Reels.\n    for b in briefs:\n\
+          \        b[\"format\"] = fmt_list[b[\"idx\"] % len(fmt_list)]\n        b[\"niche\"] = niche\n        b[\"platform\"] = platform\n  \
+          \      b[\"banned_titles\"] = banned[:10]\n\n    notice = \"\"\n    if source == \"cold_start\":\n        notice = (\"У базі немає ні\
+          \ тем Day 2, ні трендів Day 1 для цієї ніші — \"\n                  \"працюємо холодним стартом, привʼязки до джерела не буде.\")\n\
+          \    elif source == \"day1_trends\":\n        notice = (\"Затверджених тем Day 2 для цієї ніші немає — \"\n                  \"спираємось\
+          \ напряму на тренди Day 1.\")\n\n    return {\n        \"briefs\": briefs,\n        \"count\": len(briefs),\n        \"source\": source,\n\
+          \        \"notice\": notice,\n        \"gate\": \"ok\" if briefs else \"empty\",\n        \"debug\": (\"topics=%d trends=%d existing=%d\
+          \ -> briefs=%d src=%s\"\n                  % (len(topics), len(trends), len(existing), len(briefs), source)),\n    }\n"
+        code_language: python3
+        desc: Каскад джерел day2_topics → day1_trends → холодний старт, дедуп і роздача форматів.
+        outputs:
+          briefs:
+            children: null
+            type: array[object]
+          count:
+            children: null
+            type: number
+          debug:
+            children: null
+            type: string
+          gate:
+            children: null
+            type: string
+          notice:
+            children: null
+            type: string
+          source:
+            children: null
+            type: string
+        selected: false
+        title: Prepare briefs
+        type: code
+        variables:
+        - value_selector:
+          - '1787000000004'
+          - json
+          value_type: array[object]
+          variable: topics_json
+        - value_selector:
+          - '1787000000004'
+          - text
+          value_type: string
+          variable: topics_text
+        - value_selector:
+          - '1787000000005'
+          - json
+          value_type: array[object]
+          variable: trends_json
+        - value_selector:
+          - '1787000000005'
+          - text
+          value_type: string
+          variable: trends_text
+        - value_selector:
+          - '1787000000006'
+          - json
+          value_type: array[object]
+          variable: content_json
+        - value_selector:
+          - '1787000000006'
+          - text
+          value_type: string
+          variable: content_text
+        - value_selector:
+          - '1787000000003'
+          - niche
+          value_type: string
+          variable: niche
+        - value_selector:
+          - '1787000000003'
+          - platform
+          value_type: string
+          variable: platform
+        - value_selector:
+          - '1787000000001'
+          - formats
+          value_type: string
+          variable: formats
+        - value_selector:
+          - '1787000000001'
+          - n_items
+          value_type: number
+          variable: n_items
+      height: 51
+      id: '1787000000007'
+      position:
+        x: 1840
+        y: 480
+      positionAbsolute:
+        x: 1840
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+      zIndex: 0
+    - data:
+        error_handle_mode: remove-abnormal-output
+        flatten_output: true
+        height: 420
+        is_parallel: true
+        iterator_input_type: array[object]
+        iterator_selector:
+        - '1787000000007'
+        - briefs
+        output_selector:
+        - '1787000000024'
+        - structured_output
+        output_type: array[object]
+        parallel_nums: 10
+        selected: false
+        start_node_id: 1787000000008start
+        title: Iteration · по брифах
+        type: iteration
+        width: 1500
+      height: 420
+      id: '1787000000008'
+      position:
+        x: 2140
+        y: 300
+      positionAbsolute:
+        x: 2140
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 1500
+      zIndex: 0
+    - data:
+        desc: ''
+        isInIteration: true
+        selected: false
+        title: ''
+        type: iteration-start
+      draggable: false
+      height: 48
+      id: 1787000000008start
+      parentId: '1787000000008'
+      position:
+        x: 24
+        y: 88
+      positionAbsolute:
+        x: 2164
+        y: 388
+      selectable: false
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-iteration-start
+      width: 44
+      zIndex: 1001
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1787000000008'
+        selected: false
+        template: '### Матеріали проєкту (повний контекст)
+
+          Ніша: {{ arg1.niche }}
+
+          Платформа: {{ arg1.platform }}
+
+          Формат: {{ arg1.format }}
+
+
+          Опрацьовуємо тему: {{ arg1.seed_title }}
+
+          Контекст теми: {{ arg1.seed_body }}
+
+          Хук: {{ arg1.seed_hook }}
+
+          Підказка формату: {{ arg1.seed_format }}
+
+
+          --- УСІ ТЕМИ DAY 2 У ПРОЄКТІ ---
+
+          {{ arg2 }}
+
+
+          --- УСІ ТРЕНДИ DAY 1 У ПРОЄКТІ ---
+
+          {{ arg3 }}
+
+
+          --- УЖЕ ЗГЕНЕРОВАНИЙ КОНТЕНТ ПРОЄКТУ ---
+
+          {{ arg4 }}
+
+
+          Використай ці матеріали, щоб зрозуміти контекст ніші, і зроби одиницю
+
+          контенту на тему «{{ arg1.seed_title }}».'
+        title: Dump усього контексту
+        type: template-transform
+        variables:
+        - value_selector:
+          - '1787000000008'
+          - item
+          value_type: object
+          variable: arg1
+        - value_selector:
+          - '1787000000004'
+          - text
+          value_type: string
+          variable: arg2
+        - value_selector:
+          - '1787000000005'
+          - text
+          value_type: string
+          variable: arg3
+        - value_selector:
+          - '1787000000006'
+          - text
+          value_type: string
+          variable: arg4
+      height: 51
+      id: '1787000000009'
+      parentId: '1787000000008'
+      position:
+        x: 100
+        y: 88
+      positionAbsolute:
+        x: 2240
+        y: 388
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+      zIndex: 1001
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1787000000008'
+        model:
+          completion_params:
+            temperature: 0.85
+          mode: chat
+          name: gemini-3.5-flash-lite
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: a1-sys
+          role: system
+          text: "Ти — контент-продюсер, який готує готові до зйомки одиниці контенту для соцмереж конкретного бізнесу.\n\nВХІД: один бриф — тема\
+            \ або тренд, ніша, платформа і ЗАДАНИЙ формат.\n\nЖОРСТКІ ПРАВИЛА\n1. Формат бери РІВНО той, що вказано в брифі полем «ФОРМАТ (обовʼязковий)».\n\
+            \   Не підміняй його і НЕ згадуй назву іншого формату в title чи caption —\n   матеріали Дня 1 могли пропонувати інший формат, вони\
+            \ тут не головні.\n2. Структура за форматом:\n   • reels — 3-6 кадрів, таймкоди без розривів, сумарно 15-45 с, duration_sec = сумі;\n\
+            \   • stories — 3-5 екранів по 5-7 с, таймкоди в межах кожного екрана, duration_sec = сумі;\n   • carousel — 6-8 слайдів, t_start\
+            \ = t_end = 0, duration_sec = 0,\n     visual = що на слайді, voiceover = текст слайда.\n3. Кожен кадр конкретний: «крупний план портафільтра\
+            \ з темпером» — так,\n   «показуємо атмосферу» — ні. voiceover — дослівна репліка, а не опис репліки.\n4. hook — дослівна перша фраза\
+            \ або дія, до 12 слів, з конкретикою.\n   hook_alt — принципово інший захід: інша емоція чи ракурс, не перефразування.\n5. Спирайся\
+            \ ТІЛЬКИ на переданий бриф. Не змішуй його з іншими темами.\n6. Не вигадуй фактів про бізнес: цін, імен, нагород, цифр продажів, адрес.\n\
+            \   Формулюй як ідею контенту, а не як твердження про заклад.\n7. Якщо в брифі є список «НЕ ПОВТОРЮЙ» — жоден заголовок і жоден кут\
+            \ подачі\n   не має його дублювати.\n8. Мова — українська. Без емодзі в title.\n\nФОРМАТ ВІДПОВІДІ — строго JSON за наданою схемою,\
+            \ без пояснень навколо.\n\nСАМОПЕРЕВІРКА: перш ніж віддати відповідь, перечитай свій драфт і переконайся,\nщо він відповідає брифу,\
+            \ формату й ніші. Опиши в полі self_check, що ти перевірив\nі що виправив у процесі."
+        - id: a1-usr
+          role: user
+          text: '{{#1787000000009.output#}}'
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        structured_output:
+          schema:
+            additionalProperties: false
+            properties:
+              caption: &id001
+                description: Підпис під публікацією
+                type: string
+              cta: &id002
+                description: Заклик до дії у фіналі
+                type: string
+              duration_sec: &id003
+                description: Тривалість у секундах; для carousel — 0
+                type: number
+              format: &id004
+                description: Формат публікації — беремо той, що заданий у брифі
+                enum:
+                - reels
+                - carousel
+                - stories
+                type: string
+              hashtags: &id005
+                description: Хештеги з решіткою, релевантні ніші й місту
+                items:
+                  type: string
+                maxItems: 8
+                minItems: 3
+                type: array
+              hook: &id006
+                description: Дослівна перша фраза або дія в перші 0-3 секунди, до 12 слів
+                type: string
+              hook_alt: &id007
+                description: 'Інший захід на ту саму ідею: інша емоція чи ракурс, не перефразування'
+                type: string
+              onscreen_text: &id008
+                description: Текст, що зʼявляється на екрані
+                type: string
+              script: &id009
+                description: Кадри для reels/stories або слайди для carousel
+                items:
+                  additionalProperties: false
+                  properties:
+                    n:
+                      description: Порядковий номер кадру або слайда, з 1
+                      type: number
+                    t_end:
+                      description: Кінець кадру в секундах; для carousel — 0
+                      type: number
+                    t_start:
+                      description: Початок кадру в секундах; для carousel — 0
+                      type: number
+                    visual:
+                      description: 'Що конкретно в кадрі: предмет, дія, ракурс'
+                      type: string
+                    voiceover:
+                      description: Дослівна репліка або текст слайда
+                      type: string
+                  required:
+                  - n
+                  - t_start
+                  - t_end
+                  - visual
+                  - voiceover
+                  type: object
+                maxItems: 8
+                minItems: 3
+                type: array
+              self_check:
+                description: Що перевірив і що виправив у процесі
+                type: string
+              title: &id010
+                description: Робоча назва одиниці контенту, без емодзі
+                maxLength: 90
+                type: string
+            required:
+            - format
+            - title
+            - hook
+            - hook_alt
+            - script
+            - onscreen_text
+            - caption
+            - hashtags
+            - cta
+            - duration_sec
+            - self_check
+            type: object
+        structured_output_enabled: true
+        title: A1 · Продюсер
+        type: llm
+        vision:
+          enabled: false
+      height: 87
+      id: '1787000000010'
+      parentId: '1787000000008'
+      position:
+        x: 360
+        y: 88
+      positionAbsolute:
+        x: 2500
+        y: 388
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 1001
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1787000000008'
+        model:
+          completion_params:
+            temperature: 0.4
+          mode: chat
+          name: gemini-3.5-flash-lite
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: a2-sys
+          role: system
+          text: 'Ти — редактор. Тобі дають бриф і драфт одиниці контенту.
+
+
+            Оціни драфт за пʼятьма критеріями (traceability, production_ready, hook,
+
+            format_fit, uniqueness), кожен 0-100, і ПОВЕРНИ ВИПРАВЛЕНУ ВЕРСІЮ ДРАФТУ
+
+            ЦІЛКОМ — усі поля, навіть ті, які не змінював.
+
+
+            ФОРМАТ ВІДПОВІДІ — строго JSON за наданою схемою.'
+        - id: a2-usr
+          role: user
+          text: 'БРИФ:
+
+            {{#1787000000009.output#}}
+
+
+            ДРАФТ (JSON):
+
+            {{#1787000000010.structured_output#}}'
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        structured_output:
+          schema: &id011
+            additionalProperties: false
+            properties:
+              caption: *id001
+              cta: *id002
+              duration_sec: *id003
+              format: *id004
+              hashtags: *id005
+              hook: *id006
+              hook_alt: *id007
+              onscreen_text: *id008
+              scores:
+                additionalProperties: false
+                properties:
+                  format_fit:
+                    description: Відповідність заданому формату і платформі
+                    type: number
+                  hook:
+                    description: Сила перших 0-3 секунд
+                    type: number
+                  production_ready:
+                    description: Чи можна знімати без додаткових питань
+                    type: number
+                  traceability:
+                    description: Чи справді контент про свій тренд або тему з брифа
+                    type: number
+                  uniqueness:
+                    description: Чи не дублює вже наявні заголовки проєкту
+                    type: number
+                required:
+                - traceability
+                - production_ready
+                - hook
+                - format_fit
+                - uniqueness
+                type: object
+              script: *id009
+              title: *id010
+            required:
+            - format
+            - title
+            - hook
+            - hook_alt
+            - script
+            - onscreen_text
+            - caption
+            - hashtags
+            - cta
+            - duration_sec
+            - scores
+            type: object
+        structured_output_enabled: true
+        title: A2 · Критик-переписувач
+        type: llm
+        vision:
+          enabled: false
+      height: 87
+      id: '1787000000011'
+      parentId: '1787000000008'
+      position:
+        x: 620
+        y: 88
+      positionAbsolute:
+        x: 2760
+        y: 388
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 1001
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1787000000008'
+        model:
+          completion_params:
+            temperature: 0.4
+          mode: chat
+          name: gemini-3.5-flash-lite
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: a3-sys
+          role: system
+          text: 'Ти — фінальний коректор. Тобі дають готову одиницю контенту.
+
+
+            Причеши формулювання, вирівняй тон, прибери канцелярит і повтори.
+
+            Поверни обʼєкт ЦІЛКОМ, усі поля, навіть незмінені.
+
+
+            ФОРМАТ ВІДПОВІДІ — строго JSON за наданою схемою.'
+        - id: a3-usr
+          role: user
+          text: 'ОБʼЄКТ (JSON):
+
+            {{#1787000000011.structured_output#}}'
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        structured_output:
+          schema: *id011
+        structured_output_enabled: true
+        title: A3 · Коректор
+        type: llm
+        vision:
+          enabled: false
+      height: 87
+      id: '1787000000024'
+      parentId: '1787000000008'
+      position:
+        x: 880
+        y: 88
+      positionAbsolute:
+        x: 3020
+        y: 388
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 1001
+    - data:
+        code: "\nimport json\n\nWEIGHTS = {\n    \"traceability\": 25,\n    \"production_ready\": 25,\n    \"hook\": 20,\n    \"format_fit\":\
+          \ 15,\n    \"uniqueness\": 15,\n}\nCRITERIA = list(WEIGHTS.keys())\n\n# Стеля 95. Вище — лише коли evidence містить дослівну цитату\
+          \ з драфту.\n# Це прямий фікс інфляції оцінок: у попередньому прогоні критик поставив\n# 100/100/91/100, тобто рубрика не розрізняла\
+          \ нічого.\nSOFT_CAP = 95\nMIN_EVIDENCE_FOR_TOP = 24\n\nREADY_AT = 85\nREVIEW_AT = 70\n\n\ndef _num(x, default=0.0):\n    try:\n    \
+          \    return float(x)\n    except Exception:\n        return default\n\n\ndef _score_of(entry):\n    \"\"\"scores[criterion] може бути\
+          \ {score, evidence} або просто числом.\"\"\"\n    if isinstance(entry, dict):\n        return _num(entry.get(\"score\")), str(entry.get(\"\
+          evidence\") or \"\")\n    return _num(entry), \"\"\n\n\nMODEL_NAME = \"gemini-3.5-flash-lite\"\n\n\ndef main(items, project_id, run_id,\
+          \ niche, platform, flow_version):\n    rows = []\n    per_criterion = {c: [] for c in CRITERIA}\n    totals = []\n    repaired_n = 0\n\
+          \    warnings = []\n\n    for it in (items or []):\n        if not isinstance(it, dict):\n            continue\n        inner = it.get(\"\
+          item\") if isinstance(it.get(\"item\"), dict) else it\n        raw = inner.get(\"scores\") or {}\n\n        quality = {}\n        weighted\
+          \ = 0.0\n        for c in CRITERIA:\n            sc, ev = _score_of(raw.get(c))\n            sc = max(0.0, min(100.0, sc))\n       \
+          \     if sc > SOFT_CAP and len(ev.strip()) < MIN_EVIDENCE_FOR_TOP:\n                sc = SOFT_CAP\n                warnings.append(\"\
+          %s: бал вище %d без доказу — зрізано\"\n                                % (c, SOFT_CAP))\n            quality[c] = {\"score\": round(sc,\
+          \ 2), \"evidence\": ev[:400]}\n            per_criterion[c].append(sc)\n            weighted += sc * WEIGHTS[c]\n\n        total = round(weighted\
+          \ / 100.0, 2)\n        totals.append(total)\n\n        if total >= READY_AT:\n            status = \"ready\"\n        elif total >=\
+          \ REVIEW_AT:\n            status = \"needs_review\"\n        else:\n            status = \"rejected\"\n\n        script = inner.get(\"\
+          script\") or []\n        if not isinstance(script, list):\n            script = []\n        if not script:\n            warnings.append(\"\
+          порожній script у «%s»\" % (inner.get(\"title\") or \"?\"))\n\n        tags = inner.get(\"hashtags\") or []\n        tags = [\"#\" +\
+          \ str(t).lstrip(\"#\") for t in tags if str(t).strip()]\n\n        fmt = str(inner.get(\"format\") or \"reels\").lower()\n        if\
+          \ fmt not in (\"reels\", \"carousel\", \"stories\"):\n            fmt = \"reels\"\n\n        dur = int(_num(inner.get(\"duration_sec\"\
+          ), 0))\n        if dur and (dur < 3 or dur > 900):\n            dur = max(3, min(dur, 900))\n\n        if inner.get(\"repaired\"):\n\
+          \            repaired_n += 1\n\n        row = {\n            \"project_id\": project_id or None,\n            \"topic_id\": inner.get(\"\
+          topic_id\") or None,\n            \"source_trend_id\": inner.get(\"trend_id\") or None,\n            \"run_id\": run_id,\n         \
+          \   \"niche\": niche,\n            \"platform\": platform,\n            \"format\": fmt,\n            \"title\": str(inner.get(\"title\"\
+          ) or \"\")[:200],\n            \"hook\": inner.get(\"hook\") or None,\n            \"hook_alt\": inner.get(\"hook_alt\") or None,\n\
+          \            \"script\": script,\n            \"onscreen_text\": inner.get(\"onscreen_text\") or None,\n            \"caption\": inner.get(\"\
+          caption\") or None,\n            \"hashtags\": tags,\n            \"cta\": inner.get(\"cta\") or None,\n            \"duration_sec\"\
+          : dur or None,\n            \"quality\": quality,\n            \"quality_score\": total,\n            \"repaired\": bool(inner.get(\"\
+          repaired\")),\n            \"status\": status,\n            \"model\": MODEL_NAME,\n            \"flow_version\": flow_version,\n  \
+          \      }\n        rows.append(row)\n\n    avg = round(sum(totals) / len(totals), 2) if totals else 0.0\n    by_crit = {c: round(sum(v)\
+          \ / len(v), 2) if v else 0.0\n               for c, v in per_criterion.items()}\n\n    return {\n        \"rows_json\": json.dumps(rows,\
+          \ ensure_ascii=False),\n        \"count\": len(rows),\n        \"gate\": \"ok\" if rows else \"empty\",\n        \"avg_score\": avg,\n\
+          \        \"repaired_count\": repaired_n,\n        \"by_criterion\": json.dumps(by_crit, ensure_ascii=False),\n        \"warnings\":\
+          \ \" · \".join(sorted(set(warnings))[:6]) or \"—\",\n    }\n"
+        code_language: python3
+        desc: Зважена рубрика, зріз завищених балів без доказу, збірка рядків для БД.
+        outputs:
+          avg_score:
+            children: null
+            type: number
+          by_criterion:
+            children: null
+            type: string
+          count:
+            children: null
+            type: number
+          gate:
+            children: null
+            type: string
+          repaired_count:
+            children: null
+            type: number
+          rows_json:
+            children: null
+            type: string
+          warnings:
+            children: null
+            type: string
+        selected: false
+        title: Merge · score · rows
+        type: code
+        variables:
+        - value_selector:
+          - '1787000000008'
+          - output
+          value_type: array[object]
+          variable: items
+        - value_selector:
+          - '1787000000003'
+          - project_id
+          value_type: string
+          variable: project_id
+        - value_selector:
+          - sys
+          - workflow_run_id
+          value_type: string
+          variable: run_id
+        - value_selector:
+          - '1787000000003'
+          - niche
+          value_type: string
+          variable: niche
+        - value_selector:
+          - '1787000000003'
+          - platform
+          value_type: string
+          variable: platform
+        - value_selector:
+          - '1787000000001'
+          - flow_version
+          value_type: string
+          variable: flow_version
+      height: 51
+      id: '1787000000016'
+      position:
+        x: 3740
+        y: 480
+      positionAbsolute:
+        x: 3740
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+      zIndex: 0
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: cond-rows-1
+            value: ok
+            varType: string
+            variable_selector:
+            - '1787000000016'
+            - gate
+          id: 'true'
+          logical_operator: and
+        desc: Не будимо агента запису, якщо генерувати не було з чого.
+        selected: false
+        title: Є що зберігати?
+        type: if-else
+      height: 126
+      id: '1787000000017'
+      position:
+        x: 4040
+        y: 480
+      positionAbsolute:
+        x: 4040
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: sb-insert
+            key: ''
+            type: text
+            value: '{{#1787000000016.rows_json#}}'
+          type: json
+        default_value:
+        - key: body
+          type: string
+          value: ''
+        - key: status_code
+          type: number
+          value: 0
+        - key: headers
+          type: object
+          value: '{}'
+        desc: Bulk-insert усього масиву одним викликом. 0 токенів, нічого не губиться.
+        error_strategy: default-value
+        headers: 'apikey: {{#env.SUPABASE_KEY#}}
+
+          Authorization: Bearer {{#env.SUPABASE_KEY#}}
+
+          Content-Type: application/json
+
+          Prefer: return=representation'
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        timeout:
+          connect: 10
+          read: 40
+          write: 20
+        title: Запис у day3_content
+        type: http-request
+        url: '{{#env.SUPABASE_URL#}}/rest/v1/day3_content'
+        variables: []
+      height: 120
+      id: '1787000000018'
+      position:
+        x: 4340
+        y: 480
+      positionAbsolute:
+        x: 4340
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+      zIndex: 0
+    - data:
+        default_value:
+        - key: text
+          type: string
+          value: ''
+        - key: json
+          type: array[object]
+          value: '[]'
+        desc: Читаємо назад те, що агент нібито записав.
+        error_strategy: default-value
+        is_team_authorization: true
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: The name of the table to query.
+            ja_JP: The name of the table to query.
+            pt_BR: The name of the table to query.
+            zh_Hans: The name of the table to query.
+          input_schema: null
+          label:
+            en_US: Table
+            ja_JP: Table
+            pt_BR: Table
+            zh_Hans: Table
+          llm_description: Provide the name of the table you want to query in Supabase.
+          max: null
+          min: null
+          multiple: false
+          name: table
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Maximum number of rows to return.
+            ja_JP: Maximum number of rows to return.
+            pt_BR: Maximum number of rows to return.
+            zh_Hans: Maximum number of rows to return.
+          input_schema: null
+          label:
+            en_US: Limit
+            ja_JP: Limit
+            pt_BR: Limit
+            zh_Hans: Limit
+          llm_description: Specify how many rows you want to retrieve. Default is 10.
+          max: null
+          min: null
+          multiple: false
+          name: limit
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: number
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Optional filter condition (e.g., 'status=active').
+            ja_JP: Optional filter condition (e.g., 'status=active').
+            pt_BR: Optional filter condition (e.g., 'status=active').
+            zh_Hans: Optional filter condition (e.g., 'status=active').
+          input_schema: null
+          label:
+            en_US: Filter
+            ja_JP: Filter
+            pt_BR: Filter
+            zh_Hans: Filter
+          llm_description: Provide a filter condition if needed. (e.g., 'status=active')
+          max: null
+          min: null
+          multiple: false
+          name: filter
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        params:
+          filter: ''
+          limit: ''
+          table: ''
+        plugin_id: langgenius/supabase
+        plugin_unique_identifier: langgenius/supabase:0.1.5@c841812a6a53609af8fa16e0ce238399b447ca797637d7d4cbdc57c8c1058275
+        provider_icon: https://cloud.dify.ai/console/api/workspaces/current/plugin/icon?tenant_id=67bfc09d-1d97-4c21-b4e7-fbb1e72f685b&filename=6239d130d5b7cbd43ca28b8fc2c08cccbe1440495aae395a8b8c31f0a086c149.svg
+        provider_id: langgenius/supabase/supabase
+        provider_name: langgenius/supabase/supabase
+        provider_show_name: Supabase
+        provider_type: builtin
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        title: Get Rows (перевірка запису)
+        tool_configurations: {}
+        tool_description: Get rows from a specified table in Supabase.
+        tool_label: Get Rows
+        tool_name: get_rows
+        tool_node_version: '2'
+        tool_parameters:
+          filter:
+            type: mixed
+            value: run_id={{#sys.workflow_run_id#}}
+          limit:
+            type: constant
+            value: 50
+          table:
+            type: mixed
+            value: day3_content
+        type: tool
+      height: 87
+      id: '1787000000019'
+      position:
+        x: 4640
+        y: 480
+      positionAbsolute:
+        x: 4640
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+      zIndex: 0
+    - data:
+        code: "\ndef _collect(src):\n    \"\"\"Розгортає обгортку {\"data\": [...]}, яку плагін іноді додає навколо рядків.\"\"\"\n    rows =\
+          \ []\n    if isinstance(src, dict):\n        src = [src]\n    if not isinstance(src, list):\n        return rows\n    for el in src:\n\
+          \        if not isinstance(el, dict):\n            continue\n        data = el.get(\"data\")\n        if isinstance(data, list):\n \
+          \           rows.extend([r for r in data if isinstance(r, dict)])\n        elif isinstance(data, dict):\n            rows.append(data)\n\
+          \        elif el:\n            rows.append(el)\n    return rows\n\n\ndef _rows(js, txt):\n    \"\"\"\n    Плагін Supabase віддає рядки\
+          \ то як [{...}], то як [{\"data\":[...]}],\n    то лише текстом. Розбираємо всі три випадки — інакше флоу тихо\n    працює на порожньому\
+          \ списку і ніхто цього не помічає.\n    \"\"\"\n    import json\n    rows = _collect(js)\n    if not rows and isinstance(txt, str) and\
+          \ txt.strip().startswith((\"[\", \"{\")):\n        try:\n            rows = _collect(json.loads(txt))\n        except Exception:\n \
+          \           rows = []\n    return rows\n\nimport json\n\n\ndef _esc(v):\n    \"\"\"\n    Екранування під parse_mode=HTML.\n\n    Раніше\
+          \ звіт ішов у legacy Markdown і Telegram відповідав 400\n    «can't parse entities»: у тексті є назви критеріїв format_fit,\n    production_ready\
+          \ і поле run_id — непарні підкреслення відкривають\n    курсив, який нема чим закрити. MarkdownV2 вимагав би екранувати\n    півтора\
+          \ десятка символів; HTML — рівно три.\n    \"\"\"\n    return (str(v).replace(\"&\", \"&amp;\")\n                  .replace(\"<\", \"\
+          &lt;\")\n                  .replace(\">\", \"&gt;\"))\n\n\ndef main(saved_json, saved_text, sent_json, run_id, avg_score, by_criterion,\n\
+          \         source, notice, flow_version):\n    saved = _rows(saved_json, saved_text)\n    try:\n        sent = json.loads(sent_json)\
+          \ if isinstance(sent_json, str) else (sent_json or [])\n    except Exception:\n        sent = []\n\n    saved_titles = {str(r.get(\"\
+          title\") or \"\").strip() for r in saved}\n    sent_titles = [str(r.get(\"title\") or \"\").strip() for r in sent]\n    missing = [t\
+          \ for t in sent_titles if t and t not in saved_titles]\n\n    n_sent, n_saved = len(sent_titles), len(saved)\n    ok = n_sent > 0 and\
+          \ not missing\n\n    try:\n        crit = json.loads(by_criterion) if isinstance(by_criterion, str) else (by_criterion or {})\n    except\
+          \ Exception:\n        crit = {}\n    crit_line = \" · \".join(\"%s %s\" % (k, v) for k, v in sorted(crit.items())) or \"—\"\n\n    #\
+          \ Плоский звіт — у вихід воркфлоу й в адмінку.\n    plain = [\n        \"Day 3 · %s\" % flow_version,\n        \"Джерело: %s\" % (source\
+          \ or \"—\"),\n        \"Згенеровано: %d · збережено: %d\" % (n_sent, n_saved),\n        \"Середній бал: %s\" % avg_score,\n        \"\
+          По критеріях: %s\" % crit_line,\n        \"run_id: %s\" % run_id,\n    ]\n    # Розмічений — окремо, лише для Telegram.\n    rich =\
+          \ [\n        \"<b>Day 3 · %s</b>\" % _esc(flow_version),\n        \"Джерело: <code>%s</code>\" % _esc(source or \"—\"),\n        \"\
+          Згенеровано: <b>%d</b> · збережено: <b>%d</b>\" % (n_sent, n_saved),\n        \"Середній бал: <b>%s</b>\" % _esc(avg_score),\n     \
+          \   \"По критеріях: %s\" % _esc(crit_line),\n        \"run_id: <code>%s</code>\" % _esc(run_id),\n    ]\n    if missing:\n        joined\
+          \ = \", \".join(missing[:5])\n        plain.append(\"⚠️ Не збереглося: \" + joined)\n        rich.append(\"⚠️ Не збереглося: \" + _esc(joined))\n\
+          \    if notice:\n        plain.append(notice)\n        rich.append(\"<i>%s</i>\" % _esc(notice))\n\n    report = \"\\n\".join(plain)\n\
+          \n    payload = json.dumps({\n        \"chat_id\": \"YOUR_TELEGRAM_CHAT_ID\",\n        \"text\": \"\\n\".join(rich),\n        \"parse_mode\"\
+          : \"HTML\",\n        \"disable_web_page_preview\": True,\n    }, ensure_ascii=False)\n\n    return {\n        \"saved\": n_saved,\n\
+          \        \"sent\": n_sent,\n        \"missing\": \", \".join(missing) if missing else \"—\",\n        \"all_saved\": \"yes\" if ok else\
+          \ \"no\",\n        \"report_md\": report,\n        \"tg_payload\": payload,\n    }\n"
+        code_language: python3
+        desc: Звіряє надіслане з реально збереженим і готує звіт у Telegram.
+        outputs:
+          all_saved:
+            children: null
+            type: string
+          missing:
+            children: null
+            type: string
+          report_md:
+            children: null
+            type: string
+          saved:
+            children: null
+            type: number
+          sent:
+            children: null
+            type: number
+          tg_payload:
+            children: null
+            type: string
+        selected: false
+        title: Перевірка запису
+        type: code
+        variables:
+        - value_selector:
+          - '1787000000019'
+          - json
+          value_type: array[object]
+          variable: saved_json
+        - value_selector:
+          - '1787000000019'
+          - text
+          value_type: string
+          variable: saved_text
+        - value_selector:
+          - '1787000000016'
+          - rows_json
+          value_type: string
+          variable: sent_json
+        - value_selector:
+          - sys
+          - workflow_run_id
+          value_type: string
+          variable: run_id
+        - value_selector:
+          - '1787000000016'
+          - avg_score
+          value_type: number
+          variable: avg_score
+        - value_selector:
+          - '1787000000016'
+          - by_criterion
+          value_type: string
+          variable: by_criterion
+        - value_selector:
+          - '1787000000007'
+          - source
+          value_type: string
+          variable: source
+        - value_selector:
+          - '1787000000007'
+          - notice
+          value_type: string
+          variable: notice
+        - value_selector:
+          - '1787000000001'
+          - flow_version
+          value_type: string
+          variable: flow_version
+      height: 51
+      id: '1787000000020'
+      position:
+        x: 4940
+        y: 480
+      positionAbsolute:
+        x: 4940
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+      zIndex: 0
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: tg-1787000000021
+            key: ''
+            type: text
+            value: '{{#1787000000020.tg_payload#}}'
+          type: json
+        default_value:
+        - key: body
+          type: string
+          value: ''
+        - key: status_code
+          type: number
+          value: 0
+        - key: headers
+          type: object
+          value: '{}'
+        desc: Скільки згенеровано, скільки збережено, середній бал.
+        error_strategy: default-value
+        headers: 'Content-Type: application/json'
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        timeout:
+          connect: 10
+          read: 20
+          write: 10
+        title: Telegram · звіт про прогін
+        type: http-request
+        url: https://api.telegram.org/bot{{#env.TELEGRAM_BOT_TOKEN#}}/sendMessage
+        variables: []
+      height: 100
+      id: '1787000000021'
+      position:
+        x: 5240
+        y: 480
+      positionAbsolute:
+        x: 5240
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '1787000000020'
+          - report_md
+          variable: report
+        - value_selector:
+          - '1787000000016'
+          - count
+          variable: generated
+        - value_selector:
+          - '1787000000020'
+          - saved
+          variable: saved
+        - value_selector:
+          - '1787000000020'
+          - missing
+          variable: missing
+        - value_selector:
+          - '1787000000016'
+          - avg_score
+          variable: avg_quality
+        - value_selector:
+          - '1787000000016'
+          - by_criterion
+          variable: by_criterion
+        - value_selector:
+          - '1787000000016'
+          - repaired_count
+          variable: repaired
+        - value_selector:
+          - '1787000000016'
+          - warnings
+          variable: warnings
+        - value_selector:
+          - '1787000000018'
+          - status_code
+          variable: insert_status
+        - value_selector:
+          - '1787000000007'
+          - source
+          variable: source
+        - value_selector:
+          - '1787000000003'
+          - resolve_note
+          variable: niche_resolution
+        selected: false
+        title: Готово · збережено
+        type: end
+      height: 200
+      id: '1787000000022'
+      position:
+        x: 5540
+        y: 480
+      positionAbsolute:
+        x: 5540
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '1787000000007'
+          - notice
+          variable: notice
+        - value_selector:
+          - '1787000000007'
+          - debug
+          variable: debug
+        - value_selector:
+          - '1787000000003'
+          - resolve_note
+          variable: niche_resolution
+        - value_selector:
+          - '1787000000003'
+          - available_niches
+          variable: available_niches
+        selected: false
+        title: Нічого не згенеровано
+        type: end
+      height: 150
+      id: '1787000000023'
+      position:
+        x: 4340
+        y: 800
+      positionAbsolute:
+        x: 4340
+        y: 800
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    viewport:
+      x: 0
+      y: 0
+      zoom: 0.45
+  rag_pipeline_variables: []

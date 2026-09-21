@@ -1,0 +1,2404 @@
+app:
+  description: 'Продовження Day 3: бере готовий сценарій із day3_content, заземлює візуал і підпис на бренд-бук (RAG-перемикач для порівняння),
+    генерує 4 межові кадри nano banana і 3 сегменти Veo 3.1 зі спільними кадрами на стиках, складає VTT-субтитри окремо від відео, ставить у чергу
+    публікації і чекає затвердження людиною в адмінці.'
+  icon: 🎥
+  icon_background: '#E0F2FE'
+  icon_type: emoji
+  mode: workflow
+  name: Day4 · Відео з бренд-буком (сценарій → кадри → Veo ×3 → субтитри → черга)
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/gemini:0.9.5@fc6c7d17b0852db57e2958a4051b9c5c517ba7934c43df8536c43b9ecbded514
+    version: null
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/supabase:0.1.5@c841812a6a53609af8fa16e0ce238399b447ca797637d7d4cbdc57c8c1058275
+    version: null
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/gemini_video:0.0.15@b3ec36bc6abed7ab094afef25d8ec526f51f8f07f8613d94485ee854963ec483
+    version: null
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/gemini_image:0.1.9@947022663319cf0528fa3803f60fb1ef58c3703ffc9c3c6dca6538e291cf2c96
+    version: null
+kind: app
+version: 0.7.0
+workflow:
+  conversation_variables: []
+  environment_variables:
+  - description: Токен бота від @BotFather.
+    id: e0b7c1a2-0000-4000-9000-000000000201
+    name: TELEGRAM_BOT_TOKEN
+    selector:
+    - env
+    - TELEGRAM_BOT_TOKEN
+    value: ''
+    value_type: string
+  - description: Чат для звітів.
+    id: e0b7c1a2-0000-4000-9000-000000000202
+    name: TELEGRAM_CHAT_ID
+    selector:
+    - env
+    - TELEGRAM_CHAT_ID
+    value: ''
+    value_type: string
+  - description: URL проєкту Supabase.
+    id: e0b7c1a2-0000-4000-9000-000000000203
+    name: SUPABASE_URL
+    selector:
+    - env
+    - SUPABASE_URL
+    value: ''
+    value_type: string
+  - description: Publishable-ключ Supabase.
+    id: e0b7c1a2-0000-4000-9000-000000000204
+    name: SUPABASE_KEY
+    selector:
+    - env
+    - SUPABASE_KEY
+    value: ''
+    value_type: string
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 50
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        knowledge_file_size_limit: 15
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: tool
+      id: 1788000000001-source-1788000000002-target
+      source: '1788000000001'
+      sourceHandle: source
+      target: '1788000000002'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: tool
+        targetType: code
+      id: 1788000000002-source-1788000000003-target
+      source: '1788000000002'
+      sourceHandle: source
+      target: '1788000000003'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: if-else
+      id: 1788000000003-source-1788000000004-target
+      source: '1788000000003'
+      sourceHandle: source
+      target: '1788000000004'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: end
+      id: 1788000000004-false-1788000000047-target
+      source: '1788000000004'
+      sourceHandle: 'false'
+      target: '1788000000047'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: if-else
+      id: 1788000000004-true-1788000000005-target
+      source: '1788000000004'
+      sourceHandle: 'true'
+      target: '1788000000005'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1788000000005-true-1788000000006-target
+      source: '1788000000005'
+      sourceHandle: 'true'
+      target: '1788000000006'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: llm
+      id: 1788000000006-source-1788000000007-target
+      source: '1788000000006'
+      sourceHandle: source
+      target: '1788000000007'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1788000000005-false-1788000000008-target
+      source: '1788000000005'
+      sourceHandle: 'false'
+      target: '1788000000008'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: variable-aggregator
+      id: 1788000000007-source-1788000000009-target
+      source: '1788000000007'
+      sourceHandle: source
+      target: '1788000000009'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: variable-aggregator
+      id: 1788000000008-source-1788000000009-target
+      source: '1788000000008'
+      sourceHandle: source
+      target: '1788000000009'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: variable-aggregator
+        targetType: tool
+      id: 1788000000009-source-1788000000010-target
+      source: '1788000000009'
+      sourceHandle: source
+      target: '1788000000010'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: tool
+        targetType: list-operator
+      id: 1788000000010-source-1788000000020-target
+      source: '1788000000010'
+      sourceHandle: source
+      target: '1788000000020'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: variable-aggregator
+        targetType: tool
+      id: 1788000000009-source-1788000000011-target
+      source: '1788000000009'
+      sourceHandle: source
+      target: '1788000000011'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: tool
+        targetType: tool
+      id: 1788000000010-source-1788000000011-target
+      source: '1788000000010'
+      sourceHandle: source
+      target: '1788000000011'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: tool
+        targetType: list-operator
+      id: 1788000000011-source-1788000000021-target
+      source: '1788000000011'
+      sourceHandle: source
+      target: '1788000000021'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: variable-aggregator
+        targetType: tool
+      id: 1788000000009-source-1788000000012-target
+      source: '1788000000009'
+      sourceHandle: source
+      target: '1788000000012'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: tool
+        targetType: tool
+      id: 1788000000011-source-1788000000012-target
+      source: '1788000000011'
+      sourceHandle: source
+      target: '1788000000012'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: tool
+        targetType: list-operator
+      id: 1788000000012-source-1788000000022-target
+      source: '1788000000012'
+      sourceHandle: source
+      target: '1788000000022'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: variable-aggregator
+        targetType: tool
+      id: 1788000000009-source-1788000000013-target
+      source: '1788000000009'
+      sourceHandle: source
+      target: '1788000000013'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: tool
+        targetType: tool
+      id: 1788000000012-source-1788000000013-target
+      source: '1788000000012'
+      sourceHandle: source
+      target: '1788000000013'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: tool
+        targetType: list-operator
+      id: 1788000000013-source-1788000000023-target
+      source: '1788000000013'
+      sourceHandle: source
+      target: '1788000000023'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: list-operator
+        targetType: tool
+      id: 1788000000020-source-1788000000031-target
+      source: '1788000000020'
+      sourceHandle: source
+      target: '1788000000031'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: list-operator
+        targetType: tool
+      id: 1788000000021-source-1788000000031-target
+      source: '1788000000021'
+      sourceHandle: source
+      target: '1788000000031'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: list-operator
+        targetType: tool
+      id: 1788000000021-source-1788000000032-target
+      source: '1788000000021'
+      sourceHandle: source
+      target: '1788000000032'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: list-operator
+        targetType: tool
+      id: 1788000000022-source-1788000000032-target
+      source: '1788000000022'
+      sourceHandle: source
+      target: '1788000000032'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: tool
+        targetType: tool
+      id: 1788000000031-source-1788000000032-target
+      source: '1788000000031'
+      sourceHandle: source
+      target: '1788000000032'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: list-operator
+        targetType: tool
+      id: 1788000000022-source-1788000000033-target
+      source: '1788000000022'
+      sourceHandle: source
+      target: '1788000000033'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: list-operator
+        targetType: tool
+      id: 1788000000023-source-1788000000033-target
+      source: '1788000000023'
+      sourceHandle: source
+      target: '1788000000033'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: tool
+        targetType: tool
+      id: 1788000000032-source-1788000000033-target
+      source: '1788000000032'
+      sourceHandle: source
+      target: '1788000000033'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: tool
+        targetType: code
+      id: 1788000000031-source-1788000000040-target
+      source: '1788000000031'
+      sourceHandle: source
+      target: '1788000000040'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: tool
+        targetType: code
+      id: 1788000000032-source-1788000000040-target
+      source: '1788000000032'
+      sourceHandle: source
+      target: '1788000000040'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: tool
+        targetType: code
+      id: 1788000000033-source-1788000000040-target
+      source: '1788000000033'
+      sourceHandle: source
+      target: '1788000000040'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: if-else
+      id: 1788000000040-source-1788000000041-target
+      source: '1788000000040'
+      sourceHandle: source
+      target: '1788000000041'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: end
+      id: 1788000000041-false-1788000000048-target
+      source: '1788000000041'
+      sourceHandle: 'false'
+      target: '1788000000048'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: http-request
+      id: 1788000000041-true-1788000000042-target
+      source: '1788000000041'
+      sourceHandle: 'true'
+      target: '1788000000042'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: tool
+      id: 1788000000042-source-1788000000043-target
+      source: '1788000000042'
+      sourceHandle: source
+      target: '1788000000043'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: tool
+        targetType: code
+      id: 1788000000043-source-1788000000044-target
+      source: '1788000000043'
+      sourceHandle: source
+      target: '1788000000044'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: http-request
+      id: 1788000000044-source-1788000000045-target
+      source: '1788000000044'
+      sourceHandle: source
+      target: '1788000000045'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: end
+      id: 1788000000045-source-1788000000046-target
+      source: '1788000000045'
+      sourceHandle: source
+      target: '1788000000046'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: Start
+        type: start
+        variables:
+        - default: ''
+          label: ID сценарію з day3_content (колонка id)
+          max_length: 48
+          options: []
+          required: true
+          type: text-input
+          variable: content_id
+        - default: 'true'
+          label: Використовувати бренд-бук (RAG)?
+          max_length: 8
+          options:
+          - 'true'
+          - 'false'
+          required: false
+          type: select
+          variable: use_rag
+      height: 140
+      id: '1788000000001'
+      position:
+        x: 40
+        y: 480
+      positionAbsolute:
+        x: 40
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        default_value:
+        - key: text
+          type: string
+          value: ''
+        - key: json
+          type: array[object]
+          value: '[]'
+        desc: Сценарій Day 3 — вхідний матеріал відео.
+        error_strategy: default-value
+        is_team_authorization: true
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: The name of the table to query.
+            ja_JP: The name of the table to query.
+            pt_BR: The name of the table to query.
+            zh_Hans: The name of the table to query.
+          input_schema: null
+          label:
+            en_US: Table
+            ja_JP: Table
+            pt_BR: Table
+            zh_Hans: Table
+          llm_description: Provide the name of the table you want to query in Supabase.
+          max: null
+          min: null
+          multiple: false
+          name: table
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Maximum number of rows to return.
+            ja_JP: Maximum number of rows to return.
+            pt_BR: Maximum number of rows to return.
+            zh_Hans: Maximum number of rows to return.
+          input_schema: null
+          label:
+            en_US: Limit
+            ja_JP: Limit
+            pt_BR: Limit
+            zh_Hans: Limit
+          llm_description: Specify how many rows you want to retrieve. Default is 10.
+          max: null
+          min: null
+          multiple: false
+          name: limit
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: number
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Optional filter condition (e.g., 'status=active').
+            ja_JP: Optional filter condition (e.g., 'status=active').
+            pt_BR: Optional filter condition (e.g., 'status=active').
+            zh_Hans: Optional filter condition (e.g., 'status=active').
+          input_schema: null
+          label:
+            en_US: Filter
+            ja_JP: Filter
+            pt_BR: Filter
+            zh_Hans: Filter
+          llm_description: Provide a filter condition if needed. (e.g., 'status=active')
+          max: null
+          min: null
+          multiple: false
+          name: filter
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        params:
+          filter: ''
+          limit: ''
+          table: ''
+        plugin_id: langgenius/supabase
+        plugin_unique_identifier: langgenius/supabase:0.1.5@c841812a6a53609af8fa16e0ce238399b447ca797637d7d4cbdc57c8c1058275
+        provider_icon: https://cloud.dify.ai/console/api/workspaces/current/plugin/icon?tenant_id=67bfc09d-1d97-4c21-b4e7-fbb1e72f685b&filename=6239d130d5b7cbd43ca28b8fc2c08cccbe1440495aae395a8b8c31f0a086c149.svg
+        provider_id: langgenius/supabase/supabase
+        provider_name: langgenius/supabase/supabase
+        provider_show_name: Supabase
+        provider_type: builtin
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        title: Get Rows (day3_content)
+        tool_configurations: {}
+        tool_description: Get rows from a specified table in Supabase.
+        tool_label: Get Rows
+        tool_name: get_rows
+        tool_node_version: '2'
+        tool_parameters:
+          filter:
+            type: mixed
+            value: id={{#1788000000001.content_id#}}
+          limit:
+            type: constant
+            value: 1
+          table:
+            type: mixed
+            value: day3_content
+        type: tool
+      height: 87
+      id: '1788000000002'
+      position:
+        x: 340
+        y: 480
+      positionAbsolute:
+        x: 340
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+      zIndex: 0
+    - data:
+        code: "\ndef _collect(src):\n    \"\"\"Розгортає обгортку {\"data\": [...]}, яку плагін іноді додає навколо рядків.\"\"\"\n    rows =\
+          \ []\n    if isinstance(src, dict):\n        src = [src]\n    if not isinstance(src, list):\n        return rows\n    for el in src:\n\
+          \        if not isinstance(el, dict):\n            continue\n        data = el.get(\"data\")\n        if isinstance(data, list):\n \
+          \           rows.extend([r for r in data if isinstance(r, dict)])\n        elif isinstance(data, dict):\n            rows.append(data)\n\
+          \        elif el:\n            rows.append(el)\n    return rows\n\n\ndef _rows(js, txt):\n    \"\"\"\n    Плагін Supabase віддає рядки\
+          \ то як [{...}], то як [{\"data\":[...]}],\n    то лише текстом. Розбираємо всі три випадки — інакше флоу тихо\n    працює на порожньому\
+          \ списку і ніхто цього не помічає.\n    \"\"\"\n    import json\n    rows = _collect(js)\n    if not rows and isinstance(txt, str) and\
+          \ txt.strip().startswith((\"[\", \"{\")):\n        try:\n            rows = _collect(json.loads(txt))\n        except Exception:\n \
+          \           rows = []\n    return rows\n\nimport json\n\n\ndef main(rows_json, rows_text, content_id):\n    rows = _rows(rows_json,\
+          \ rows_text)\n    row = rows[0] if rows else {}\n\n    if not row.get(\"id\"):\n        return {\"gate\": \"empty\", \"note\": (\"Сценарію\
+          \ з id=%s немає в day3_content. \"\n                \"Перевірте, що id скопійовано зі сторінки контенту в адмінці.\") % content_id,\n\
+          \                \"title\": \"\", \"niche\": \"\", \"platform\": \"\", \"caption_seed\": \"\",\n                \"brief\": \"\", \"\
+          kb_query\": \"\", \"cues_json\": \"[]\",\n                \"project_id\": \"\", \"duration\": 0}\n\n    script = row.get(\"script\"\
+          ) or []\n    if isinstance(script, str):\n        try:\n            script = json.loads(script)\n        except Exception:\n       \
+          \     script = []\n    frames = [f for f in script if isinstance(f, dict)]\n\n    title = str(row.get(\"title\") or \"\")\n    niche\
+          \ = str(row.get(\"niche\") or \"\")\n    hook = str(row.get(\"hook\") or \"\")\n\n    # ── Розкладаємо кадри сценарію на 3 відеосегменти\
+          \ по порядку.\n    n = 3\n    buckets = [[] for _ in range(n)]\n    if frames:\n        per = max(1, -(-len(frames) // n))         \
+          \ # ceil\n        for i, f in enumerate(frames):\n            buckets[min(i // per, n - 1)].append(f)\n\n    seg_lines = []\n    for\
+          \ i, b in enumerate(buckets):\n        parts = []\n        for f in b:\n            v = str(f.get(\"visual\") or \"\").strip()\n   \
+          \         vo = str(f.get(\"voiceover\") or \"\").strip()\n            if v:\n                parts.append(v)\n            if vo:\n \
+          \               parts.append(\"(голос: «%s»)\" % vo)\n        seg_lines.append(\"Сегмент %d: %s\" % (i + 1, \" · \".join(parts) or \"\
+          за темою\"))\n\n    brief = \"\\n\".join([\n        \"Тема: %s\" % title,\n        \"Ніша: %s\" % niche,\n        \"Хук: %s\" % hook,\n\
+          \        \"\",\n        \"\\n\".join(seg_lines),\n    ])\n\n    # ── Субтитри: перемапуємо войсовер у сітку 3×8 с.\n    # Таймінги оригіналу\
+          \ можуть бути 15–45 с; фінальне відео — рівно 24 с,\n    # тому репліки кожного сегмента рівномірно ділять його 8 секунд.\n    cues\
+          \ = []\n    for i, b in enumerate(buckets):\n        vos = [str(f.get(\"voiceover\") or \"\").strip() for f in b]\n        vos = [v\
+          \ for v in vos if v]\n        if not vos:\n            continue\n        base = i * 8.0\n        step = 8.0 / len(vos)\n        for\
+          \ j, text in enumerate(vos):\n            cues.append({\"start\": round(base + j * step, 2),\n                         \"end\": round(base\
+          \ + (j + 1) * step - 0.05, 2),\n                         \"text\": text})\n\n    return {\n        \"gate\": \"ok\",\n        \"note\"\
+          : \"\",\n        \"title\": title,\n        \"niche\": niche,\n        \"platform\": str(row.get(\"platform\") or \"instagram\"),\n\
+          \        \"caption_seed\": str(row.get(\"caption\") or \"\"),\n        \"brief\": brief,\n        \"kb_query\": \"%s %s тон бренду візуальний\
+          \ стиль палітра формат підписів\" % (niche, title),\n        \"cues_json\": json.dumps(cues, ensure_ascii=False),\n        \"project_id\"\
+          : str(row.get(\"project_id\") or \"\"),\n        \"duration\": 24,\n    }\n"
+        code_language: python3
+        desc: Ділить сценарій на 3 сегменти, готує бриф, запит у бренд-бук і сирі субтитри.
+        outputs:
+          brief:
+            children: null
+            type: string
+          caption_seed:
+            children: null
+            type: string
+          cues_json:
+            children: null
+            type: string
+          duration:
+            children: null
+            type: number
+          gate:
+            children: null
+            type: string
+          kb_query:
+            children: null
+            type: string
+          niche:
+            children: null
+            type: string
+          note:
+            children: null
+            type: string
+          platform:
+            children: null
+            type: string
+          project_id:
+            children: null
+            type: string
+          title:
+            children: null
+            type: string
+        selected: false
+        title: Розбір сценарію
+        type: code
+        variables:
+        - value_selector:
+          - '1788000000002'
+          - json
+          value_type: array[object]
+          variable: rows_json
+        - value_selector:
+          - '1788000000002'
+          - text
+          value_type: string
+          variable: rows_text
+        - value_selector:
+          - '1788000000001'
+          - content_id
+          value_type: string
+          variable: content_id
+      height: 51
+      id: '1788000000003'
+      position:
+        x: 640
+        y: 480
+      positionAbsolute:
+        x: 640
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+      zIndex: 0
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: c-ok
+            value: ok
+            varType: string
+            variable_selector:
+            - '1788000000003'
+            - gate
+          id: 'true'
+          logical_operator: and
+        desc: Немає сценарію — виходимо з поясненням, не палимо Veo.
+        selected: false
+        title: Сценарій знайдено?
+        type: if-else
+      height: 126
+      id: '1788000000004'
+      position:
+        x: 940
+        y: 480
+      positionAbsolute:
+        x: 940
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '1788000000003'
+          - note
+          variable: empty_note
+        selected: false
+        title: Сценарію немає
+        type: end
+      height: 110
+      id: '1788000000047'
+      position:
+        x: 1240
+        y: 800
+      positionAbsolute:
+        x: 1240
+        y: 800
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: c-rag
+            value: 'true'
+            varType: string
+            variable_selector:
+            - '1788000000001'
+            - use_rag
+          id: 'true'
+          logical_operator: and
+        desc: 'Порівняння за ТЗ: той самий бриф із бренд-буком і без.'
+        selected: false
+        title: З бренд-буком?
+        type: if-else
+      height: 126
+      id: '1788000000005'
+      position:
+        x: 1240
+        y: 480
+      positionAbsolute:
+        x: 1240
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        dataset_ids:
+        - REPLACE-WITH-BRANDBOOK-DATASET-ID
+        desc: 'ПІСЛЯ ІМПОРТУ: відкрийте цю ноду і виберіть свою Knowledge Base з бренд-буком.'
+        metadata_filtering_mode: disabled
+        multiple_retrieval_config:
+          reranking_enable: false
+          score_threshold: 0.35
+          top_k: 6
+        query_variable_selector:
+        - '1788000000003'
+        - kb_query
+        retrieval_mode: multiple
+        selected: false
+        title: Бренд-бук (Knowledge)
+        type: knowledge-retrieval
+      height: 100
+      id: '1788000000006'
+      position:
+        x: 1540
+        y: 320
+      positionAbsolute:
+        x: 1540
+        y: 320
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1788000000006'
+          - result
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gemini-3.5-flash-lite
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: 1788000000007-sys
+          role: system
+          text: "Ти — візуальний директор коротких вертикальних відео (Reels 9:16).\n\nВХІД: сценарій з трьома сегментами. Твоє завдання — план\
+            \ зйомки:\n- style_block: один спільний стиль для всіх кадрів;\n- 4 кадри-межі (frame_0…frame_3): frame_1 і frame_2 — це СПІЛЬНІ кадри\n\
+            \  на стиках сегментів, опиши їх так, щоб кінець одного відео і початок\n  наступного були тим самим зображенням;\n- 3 промпти руху\
+            \ (seg_1…seg_3), кожен веде з кадру i-1 у кадр i;\n- caption: підпис до публікації.\n\nПРАВИЛА\n1. Кожен frame_* — самодостатній опис\
+            \ для генератора зображень: обʼєкт,\n   дія, ракурс, світло. Без «як у попередньому кадрі» — генератор не бачить\n   інших кадрів,\
+            \ повторюй ключові деталі дослівно.\n2. У seg_* — БЕЗ написів на екрані і без розбірливої мови (укр озвучка\n   відео-моделлю ламається;\
+            \ субтитри додаються окремо).\n3. Узгодженість: той самий герой, та сама локація, той самий одяг у всіх\n   7 полях. Повторюй ці деталі\
+            \ в кожному полі.\n4. Мова полів caption/brand_alignment/missing — українська; frame_*/seg_*\n   пиши англійською (генератори картинок\
+            \ і відео розуміють її краще).\n\nФОРМАТ — строго JSON за схемою.\n\nБРЕНД-БУК: у контексті — витяги з бренд-буку (палітра, тон, do/don't,\n\
+            формат підписів). Застосовуй їх у style_block, negative_prompt і caption,\nа в brand_alignment процитуй, ЩО саме застосував. Якщо\
+            \ потрібного правила\nв контексті немає — НЕ вигадуй: лишайся в нейтрально-безпечних межах і\nзапиши прогалину в missing_from_brandbook."
+        - id: 1788000000007-usr
+          role: user
+          text: 'СЦЕНАРІЙ:
+
+            {{#1788000000003.brief#}}
+
+
+            Чернетка підпису з Day 3:
+
+            {{#1788000000003.caption_seed#}}'
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        structured_output:
+          schema: &id001
+            additionalProperties: false
+            properties:
+              brand_alignment:
+                description: Які правила бренд-буку застосовано і де саме (2-3 речення)
+                type: string
+              caption:
+                description: Підпис до публікації в голосі бренду, з хештегами. Українською.
+                type: string
+              frame_0:
+                description: 'Кадр-межа №0: самодостатній опис статичного кадру для генератора зображень. Вертикаль 9:16. Кадр 0 — перший кадр
+                  відео.'
+                type: string
+              frame_1:
+                description: 'Кадр-межа №1: самодостатній опис статичного кадру для генератора зображень. Вертикаль 9:16. Кадр 1 — стик сегментів
+                  1 і 2 — ОДИН спільний кадр.'
+                type: string
+              frame_2:
+                description: 'Кадр-межа №2: самодостатній опис статичного кадру для генератора зображень. Вертикаль 9:16. Кадр 2 — стик сегментів
+                  2 і 3 — ОДИН спільний кадр.'
+                type: string
+              frame_3:
+                description: 'Кадр-межа №3: самодостатній опис статичного кадру для генератора зображень. Вертикаль 9:16. Кадр 3 — фінальний кадр
+                  відео.'
+                type: string
+              missing_from_brandbook:
+                description: Чого бракувало в бренд-буці для впевненого рішення. «—» якщо все є. НЕ вигадуй відсутні правила.
+                type: string
+              negative_prompt:
+                description: 'Чого не має бути в кадрі (з do/don''t бренд-буку + завжди: text, captions, watermark, logos)'
+                type: string
+              seg_1:
+                description: 'Промпт руху для відеосегмента 1 (8 с): що відбувається від кадру 0 до кадру 1. Без тексту на екрані, без розбірливої
+                  мови — лише амбієнтний звук.'
+                type: string
+              seg_2:
+                description: 'Промпт руху для відеосегмента 2 (8 с): що відбувається від кадру 1 до кадру 2. Без тексту на екрані, без розбірливої
+                  мови — лише амбієнтний звук.'
+                type: string
+              seg_3:
+                description: 'Промпт руху для відеосегмента 3 (8 с): що відбувається від кадру 2 до кадру 3. Без тексту на екрані, без розбірливої
+                  мови — лише амбієнтний звук.'
+                type: string
+              style_block:
+                description: 'Єдиний візуальний стиль для ВСІХ кадрів: палітра, світло, оточення, типаж людей. З бренд-буку, якщо він у контексті.'
+                type: string
+            required:
+            - style_block
+            - negative_prompt
+            - caption
+            - brand_alignment
+            - missing_from_brandbook
+            - frame_0
+            - frame_1
+            - frame_2
+            - frame_3
+            - seg_1
+            - seg_2
+            - seg_3
+            type: object
+        structured_output_enabled: true
+        title: Директор · у голосі бренду
+        type: llm
+        vision:
+          enabled: false
+      height: 97
+      id: '1788000000007'
+      position:
+        x: 1840
+        y: 320
+      positionAbsolute:
+        x: 1840
+        y: 320
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gemini-3.5-flash-lite
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: 1788000000008-sys
+          role: system
+          text: "Ти — візуальний директор коротких вертикальних відео (Reels 9:16).\n\nВХІД: сценарій з трьома сегментами. Твоє завдання — план\
+            \ зйомки:\n- style_block: один спільний стиль для всіх кадрів;\n- 4 кадри-межі (frame_0…frame_3): frame_1 і frame_2 — це СПІЛЬНІ кадри\n\
+            \  на стиках сегментів, опиши їх так, щоб кінець одного відео і початок\n  наступного були тим самим зображенням;\n- 3 промпти руху\
+            \ (seg_1…seg_3), кожен веде з кадру i-1 у кадр i;\n- caption: підпис до публікації.\n\nПРАВИЛА\n1. Кожен frame_* — самодостатній опис\
+            \ для генератора зображень: обʼєкт,\n   дія, ракурс, світло. Без «як у попередньому кадрі» — генератор не бачить\n   інших кадрів,\
+            \ повторюй ключові деталі дослівно.\n2. У seg_* — БЕЗ написів на екрані і без розбірливої мови (укр озвучка\n   відео-моделлю ламається;\
+            \ субтитри додаються окремо).\n3. Узгодженість: той самий герой, та сама локація, той самий одяг у всіх\n   7 полях. Повторюй ці деталі\
+            \ в кожному полі.\n4. Мова полів caption/brand_alignment/missing — українська; frame_*/seg_*\n   пиши англійською (генератори картинок\
+            \ і відео розуміють її краще).\n\nФОРМАТ — строго JSON за схемою.\n\nБренд-бук НЕ підключено (порівняльний прогін без RAG). Працюй\
+            \ як типовий\nгенератор без знань про бренд. У brand_alignment запиши «бренд-бук не\nпідключався», у missing_from_brandbook — «прогін\
+            \ без RAG»."
+        - id: 1788000000008-usr
+          role: user
+          text: 'СЦЕНАРІЙ:
+
+            {{#1788000000003.brief#}}
+
+
+            Чернетка підпису з Day 3:
+
+            {{#1788000000003.caption_seed#}}'
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        structured_output:
+          schema: *id001
+        structured_output_enabled: true
+        title: Директор · без бренд-буку
+        type: llm
+        vision:
+          enabled: false
+      height: 97
+      id: '1788000000008'
+      position:
+        x: 1840
+        y: 600
+      positionAbsolute:
+        x: 1840
+        y: 600
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        advanced_settings:
+          group_enabled: false
+          groups: []
+        desc: Виграє той директор, чия гілка виконувалась.
+        output_type: object
+        selected: false
+        title: План відео
+        type: variable-aggregator
+        variables:
+        - - '1788000000007'
+          - structured_output
+        - - '1788000000008'
+          - structured_output
+      height: 130
+      id: '1788000000009'
+      position:
+        x: 2140
+        y: 480
+      positionAbsolute:
+        x: 2140
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        default_value:
+        - key: text
+          type: string
+          value: ''
+        - key: files
+          type: array[file]
+          value: []
+        - key: json
+          type: array[object]
+          value: '[]'
+        desc: Nano banana · межовий кадр 0, вертикаль 9:16.
+        error_strategy: default-value
+        is_team_authorization: true
+        params:
+          model: gemini-2.5-flash-image
+        plugin_id: langgenius/gemini_image
+        plugin_unique_identifier: langgenius/gemini_image:0.1.9@947022663319cf0528fa3803f60fb1ef58c3703ffc9c3c6dca6538e291cf2c96
+        provider_id: langgenius/gemini_image/gemini_image
+        provider_name: langgenius/gemini_image/gemini_image
+        provider_show_name: Gemini Image
+        provider_type: builtin
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 5000
+        selected: false
+        title: K0 · кадр-межа 0
+        tool_configurations:
+          model:
+            type: constant
+            value: gemini-2.5-flash-image
+        tool_description: Gemini Image Generation and Editing
+        tool_label: Image Generate
+        tool_name: image_generate
+        tool_node_version: '2'
+        tool_parameters:
+          prompt:
+            type: mixed
+            value: 'Generate ONE vertical 9:16 photo-style image. No text, no captions, no watermarks.
+
+
+              Style: {{#1788000000009.output.style_block#}}
+
+
+              Frame: {{#1788000000009.output.frame_0#}}'
+        type: tool
+      height: 110
+      id: '1788000000010'
+      position:
+        x: 2440
+        y: 180
+      positionAbsolute:
+        x: 2440
+        y: 180
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: ''
+        extract_by:
+          enabled: true
+          serial: '1'
+        filter_by:
+          conditions: []
+          enabled: false
+        item_var_type: file
+        limit:
+          enabled: false
+          size: 10
+        order_by:
+          enabled: false
+          key: ''
+          value: asc
+        selected: false
+        title: Файл кадру 0
+        type: list-operator
+        var_type: array[file]
+        variable:
+        - '1788000000010'
+        - files
+      height: 80
+      id: '1788000000020'
+      position:
+        x: 2740
+        y: 180
+      positionAbsolute:
+        x: 2740
+        y: 180
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 200
+      zIndex: 0
+    - data:
+        default_value:
+        - key: text
+          type: string
+          value: ''
+        - key: files
+          type: array[file]
+          value: []
+        - key: json
+          type: array[object]
+          value: '[]'
+        desc: Nano banana · межовий кадр 1, вертикаль 9:16.
+        error_strategy: default-value
+        is_team_authorization: true
+        params:
+          model: gemini-2.5-flash-image
+        plugin_id: langgenius/gemini_image
+        plugin_unique_identifier: langgenius/gemini_image:0.1.9@947022663319cf0528fa3803f60fb1ef58c3703ffc9c3c6dca6538e291cf2c96
+        provider_id: langgenius/gemini_image/gemini_image
+        provider_name: langgenius/gemini_image/gemini_image
+        provider_show_name: Gemini Image
+        provider_type: builtin
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 5000
+        selected: false
+        title: K1 · кадр-межа 1
+        tool_configurations:
+          model:
+            type: constant
+            value: gemini-2.5-flash-image
+        tool_description: Gemini Image Generation and Editing
+        tool_label: Image Generate
+        tool_name: image_generate
+        tool_node_version: '2'
+        tool_parameters:
+          prompt:
+            type: mixed
+            value: 'Generate ONE vertical 9:16 photo-style image. No text, no captions, no watermarks.
+
+
+              Style: {{#1788000000009.output.style_block#}}
+
+
+              Frame: {{#1788000000009.output.frame_1#}}'
+        type: tool
+      height: 110
+      id: '1788000000011'
+      position:
+        x: 2440
+        y: 380
+      positionAbsolute:
+        x: 2440
+        y: 380
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: ''
+        extract_by:
+          enabled: true
+          serial: '1'
+        filter_by:
+          conditions: []
+          enabled: false
+        item_var_type: file
+        limit:
+          enabled: false
+          size: 10
+        order_by:
+          enabled: false
+          key: ''
+          value: asc
+        selected: false
+        title: Файл кадру 1
+        type: list-operator
+        var_type: array[file]
+        variable:
+        - '1788000000011'
+        - files
+      height: 80
+      id: '1788000000021'
+      position:
+        x: 2740
+        y: 380
+      positionAbsolute:
+        x: 2740
+        y: 380
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 200
+      zIndex: 0
+    - data:
+        default_value:
+        - key: text
+          type: string
+          value: ''
+        - key: files
+          type: array[file]
+          value: []
+        - key: json
+          type: array[object]
+          value: '[]'
+        desc: Nano banana · межовий кадр 2, вертикаль 9:16.
+        error_strategy: default-value
+        is_team_authorization: true
+        params:
+          model: gemini-2.5-flash-image
+        plugin_id: langgenius/gemini_image
+        plugin_unique_identifier: langgenius/gemini_image:0.1.9@947022663319cf0528fa3803f60fb1ef58c3703ffc9c3c6dca6538e291cf2c96
+        provider_id: langgenius/gemini_image/gemini_image
+        provider_name: langgenius/gemini_image/gemini_image
+        provider_show_name: Gemini Image
+        provider_type: builtin
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 5000
+        selected: false
+        title: K2 · кадр-межа 2
+        tool_configurations:
+          model:
+            type: constant
+            value: gemini-2.5-flash-image
+        tool_description: Gemini Image Generation and Editing
+        tool_label: Image Generate
+        tool_name: image_generate
+        tool_node_version: '2'
+        tool_parameters:
+          prompt:
+            type: mixed
+            value: 'Generate ONE vertical 9:16 photo-style image. No text, no captions, no watermarks.
+
+
+              Style: {{#1788000000009.output.style_block#}}
+
+
+              Frame: {{#1788000000009.output.frame_2#}}'
+        type: tool
+      height: 110
+      id: '1788000000012'
+      position:
+        x: 2440
+        y: 580
+      positionAbsolute:
+        x: 2440
+        y: 580
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: ''
+        extract_by:
+          enabled: true
+          serial: '1'
+        filter_by:
+          conditions: []
+          enabled: false
+        item_var_type: file
+        limit:
+          enabled: false
+          size: 10
+        order_by:
+          enabled: false
+          key: ''
+          value: asc
+        selected: false
+        title: Файл кадру 2
+        type: list-operator
+        var_type: array[file]
+        variable:
+        - '1788000000012'
+        - files
+      height: 80
+      id: '1788000000022'
+      position:
+        x: 2740
+        y: 580
+      positionAbsolute:
+        x: 2740
+        y: 580
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 200
+      zIndex: 0
+    - data:
+        default_value:
+        - key: text
+          type: string
+          value: ''
+        - key: files
+          type: array[file]
+          value: []
+        - key: json
+          type: array[object]
+          value: '[]'
+        desc: Nano banana · межовий кадр 3, вертикаль 9:16.
+        error_strategy: default-value
+        is_team_authorization: true
+        params:
+          model: gemini-2.5-flash-image
+        plugin_id: langgenius/gemini_image
+        plugin_unique_identifier: langgenius/gemini_image:0.1.9@947022663319cf0528fa3803f60fb1ef58c3703ffc9c3c6dca6538e291cf2c96
+        provider_id: langgenius/gemini_image/gemini_image
+        provider_name: langgenius/gemini_image/gemini_image
+        provider_show_name: Gemini Image
+        provider_type: builtin
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 5000
+        selected: false
+        title: K3 · кадр-межа 3
+        tool_configurations:
+          model:
+            type: constant
+            value: gemini-2.5-flash-image
+        tool_description: Gemini Image Generation and Editing
+        tool_label: Image Generate
+        tool_name: image_generate
+        tool_node_version: '2'
+        tool_parameters:
+          prompt:
+            type: mixed
+            value: 'Generate ONE vertical 9:16 photo-style image. No text, no captions, no watermarks.
+
+
+              Style: {{#1788000000009.output.style_block#}}
+
+
+              Frame: {{#1788000000009.output.frame_3#}}'
+        type: tool
+      height: 110
+      id: '1788000000013'
+      position:
+        x: 2440
+        y: 780
+      positionAbsolute:
+        x: 2440
+        y: 780
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: ''
+        extract_by:
+          enabled: true
+          serial: '1'
+        filter_by:
+          conditions: []
+          enabled: false
+        item_var_type: file
+        limit:
+          enabled: false
+          size: 10
+        order_by:
+          enabled: false
+          key: ''
+          value: asc
+        selected: false
+        title: Файл кадру 3
+        type: list-operator
+        var_type: array[file]
+        variable:
+        - '1788000000013'
+        - files
+      height: 80
+      id: '1788000000023'
+      position:
+        x: 2740
+        y: 780
+      positionAbsolute:
+        x: 2740
+        y: 780
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 200
+      zIndex: 0
+    - data:
+        default_value:
+        - key: text
+          type: string
+          value: ''
+        - key: files
+          type: array[file]
+          value: []
+        - key: json
+          type: array[object]
+          value: '[]'
+        desc: 'Veo 3.1 · сегмент 1: з кадру 0 у кадр 1, 8 с, 9:16.'
+        error_strategy: default-value
+        is_team_authorization: true
+        params:
+          aspect_ratio: '9:16'
+          duration_seconds: '8'
+          model: veo-3.1-fast-generate-preview
+          resolution: 720p
+        plugin_id: langgenius/gemini_video
+        plugin_unique_identifier: langgenius/gemini_video:0.0.15@b3ec36bc6abed7ab094afef25d8ec526f51f8f07f8613d94485ee854963ec483
+        provider_id: langgenius/gemini_video/gemini_video
+        provider_name: langgenius/gemini_video/gemini_video
+        provider_show_name: Gemini Video
+        provider_type: builtin
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 5000
+        selected: false
+        title: V1 · Veo сегмент 1
+        tool_configurations:
+          aspect_ratio:
+            type: constant
+            value: '9:16'
+          duration_seconds:
+            type: constant
+            value: '8'
+          image:
+            type: variable
+            value:
+            - '1788000000020'
+            - first_record
+          last_frame:
+            type: variable
+            value:
+            - '1788000000021'
+            - first_record
+          model:
+            type: constant
+            value: veo-3.1-fast-generate-preview
+          negative_prompt:
+            type: mixed
+            value: '{{#1788000000009.output.negative_prompt#}}'
+          prompt:
+            type: mixed
+            value: '{{#1788000000009.output.seg_1#}}'
+          resolution:
+            type: constant
+            value: 720p
+        tool_description: gemini video generation support for Veo 3.1
+        tool_label: Gemini Video Generation
+        tool_name: gemini_video_general
+        tool_node_version: '2'
+        tool_parameters: {}
+        type: tool
+      height: 120
+      id: '1788000000031'
+      position:
+        x: 3040
+        y: 240
+      positionAbsolute:
+        x: 3040
+        y: 240
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        default_value:
+        - key: text
+          type: string
+          value: ''
+        - key: files
+          type: array[file]
+          value: []
+        - key: json
+          type: array[object]
+          value: '[]'
+        desc: 'Veo 3.1 · сегмент 2: з кадру 1 у кадр 2, 8 с, 9:16.'
+        error_strategy: default-value
+        is_team_authorization: true
+        params:
+          aspect_ratio: '9:16'
+          duration_seconds: '8'
+          model: veo-3.1-fast-generate-preview
+          resolution: 720p
+        plugin_id: langgenius/gemini_video
+        plugin_unique_identifier: langgenius/gemini_video:0.0.15@b3ec36bc6abed7ab094afef25d8ec526f51f8f07f8613d94485ee854963ec483
+        provider_id: langgenius/gemini_video/gemini_video
+        provider_name: langgenius/gemini_video/gemini_video
+        provider_show_name: Gemini Video
+        provider_type: builtin
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 5000
+        selected: false
+        title: V2 · Veo сегмент 2
+        tool_configurations:
+          aspect_ratio:
+            type: constant
+            value: '9:16'
+          duration_seconds:
+            type: constant
+            value: '8'
+          image:
+            type: variable
+            value:
+            - '1788000000021'
+            - first_record
+          last_frame:
+            type: variable
+            value:
+            - '1788000000022'
+            - first_record
+          model:
+            type: constant
+            value: veo-3.1-fast-generate-preview
+          negative_prompt:
+            type: mixed
+            value: '{{#1788000000009.output.negative_prompt#}}'
+          prompt:
+            type: mixed
+            value: '{{#1788000000009.output.seg_2#}}'
+          resolution:
+            type: constant
+            value: 720p
+        tool_description: gemini video generation support for Veo 3.1
+        tool_label: Gemini Video Generation
+        tool_name: gemini_video_general
+        tool_node_version: '2'
+        tool_parameters: {}
+        type: tool
+      height: 120
+      id: '1788000000032'
+      position:
+        x: 3040
+        y: 460
+      positionAbsolute:
+        x: 3040
+        y: 460
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        default_value:
+        - key: text
+          type: string
+          value: ''
+        - key: files
+          type: array[file]
+          value: []
+        - key: json
+          type: array[object]
+          value: '[]'
+        desc: 'Veo 3.1 · сегмент 3: з кадру 2 у кадр 3, 8 с, 9:16.'
+        error_strategy: default-value
+        is_team_authorization: true
+        params:
+          aspect_ratio: '9:16'
+          duration_seconds: '8'
+          model: veo-3.1-fast-generate-preview
+          resolution: 720p
+        plugin_id: langgenius/gemini_video
+        plugin_unique_identifier: langgenius/gemini_video:0.0.15@b3ec36bc6abed7ab094afef25d8ec526f51f8f07f8613d94485ee854963ec483
+        provider_id: langgenius/gemini_video/gemini_video
+        provider_name: langgenius/gemini_video/gemini_video
+        provider_show_name: Gemini Video
+        provider_type: builtin
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 5000
+        selected: false
+        title: V3 · Veo сегмент 3
+        tool_configurations:
+          aspect_ratio:
+            type: constant
+            value: '9:16'
+          duration_seconds:
+            type: constant
+            value: '8'
+          image:
+            type: variable
+            value:
+            - '1788000000022'
+            - first_record
+          last_frame:
+            type: variable
+            value:
+            - '1788000000023'
+            - first_record
+          model:
+            type: constant
+            value: veo-3.1-fast-generate-preview
+          negative_prompt:
+            type: mixed
+            value: '{{#1788000000009.output.negative_prompt#}}'
+          prompt:
+            type: mixed
+            value: '{{#1788000000009.output.seg_3#}}'
+          resolution:
+            type: constant
+            value: 720p
+        tool_description: gemini video generation support for Veo 3.1
+        tool_label: Gemini Video Generation
+        tool_name: gemini_video_general
+        tool_node_version: '2'
+        tool_parameters: {}
+        type: tool
+      height: 120
+      id: '1788000000033'
+      position:
+        x: 3040
+        y: 680
+      positionAbsolute:
+        x: 3040
+        y: 680
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        code: "\nimport json\nfrom datetime import datetime, timedelta, timezone\n\n# У code-ноди НЕ можна заводити file-змінні: пісочниця серіалізує\
+          \ входи\n# в JSON і падає з «Type is not JSON serializable: File». Тому відеофайли\n# сюди не заходять: їх віддає end-нода (File → url\
+          \ вона вміє), а склеює\n# і зберігає адмінка — один фінальний mp4.\n\n\ndef _vtt(cues):\n    def ts(sec):\n        m, s = divmod(max(0.0,\
+          \ float(sec)), 60.0)\n        return \"%02d:%06.3f\" % (int(m), s)\n    lines = [\"WEBVTT\", \"\"]\n    for i, c in enumerate(cues,\
+          \ 1):\n        lines += [str(i), \"%s --> %s\" % (ts(c[\"start\"]), ts(c[\"end\"])), c[\"text\"], \"\"]\n    return \"\\n\".join(lines)\n\
+          \n\ndef main(plan, cues_json, title, niche, platform, caption_seed,\n         content_id, project_id, use_rag, run_id):\n    p = plan\
+          \ if isinstance(plan, dict) else {}\n    try:\n        cues = json.loads(cues_json) if isinstance(cues_json, str) else (cues_json or\
+          \ [])\n    except Exception:\n        cues = []\n\n    if not str(p.get(\"style_block\") or \"\").strip():\n        return {\"row_json\"\
+          : \"{}\", \"gate\": \"empty\",\n                \"note\": \"Директор не повернув план — дивіться ноди «Директор…» у трасуванні.\",\n\
+          \                \"publish_at\": \"\", \"vtt\": \"\", \"caption_out\": \"\"}\n\n    segments = [{\"n\": i, \"duration_sec\": 8,\n  \
+          \               \"prompt\": str(p.get(\"seg_%d\" % i) or \"\")[:500]} for i in (1, 2, 3)]\n\n    # Scheduler & Publisher: наступний\
+          \ вільний вечірній слот, 18:00 Києва.\n    kyiv = timezone(timedelta(hours=3))\n    now = datetime.now(kyiv)\n    slot = now.replace(hour=18,\
+          \ minute=0, second=0, microsecond=0)\n    if slot <= now:\n        slot += timedelta(days=1)\n\n    row = {\n        \"content_id\"\
+          : content_id or None,\n        \"project_id\": project_id or None,\n        \"run_id\": run_id,\n        \"niche\": niche,\n       \
+          \ \"title\": title,\n        \"platform\": platform,\n        \"use_rag\": str(use_rag).strip().lower() == \"true\",\n        \"video_model\"\
+          : \"veo-3.1\",\n        # rendering: адмінка забере сегменти з виходів прогону, склеїть\n        # в один mp4 і сама підніме статус\
+          \ до pending_review.\n        \"status\": \"rendering\",\n        \"caption\": str(p.get(\"caption\") or caption_seed)[:2000],\n   \
+          \     \"brand_alignment\": str(p.get(\"brand_alignment\") or \"\")[:2000],\n        \"missing_from_brandbook\": str(p.get(\"missing_from_brandbook\"\
+          ) or \"\")[:1000],\n        \"frames\": [],\n        \"segments\": segments,\n        \"video_url\": None,\n        \"subtitles_vtt\"\
+          : _vtt(cues),\n        \"publish_at\": slot.isoformat(),\n    }\n\n    return {\n        \"row_json\": json.dumps(row, ensure_ascii=False),\n\
+          \        \"gate\": \"ok\",\n        \"note\": \"\",\n        \"publish_at\": slot.strftime(\"%d.%m %H:%M\"),\n        \"vtt\": row[\"\
+          subtitles_vtt\"],\n        \"caption_out\": row[\"caption\"],\n    }\n"
+        code_language: python3
+        desc: Сегменти + кадри + субтитри + слот публікації → один рядок day4_videos.
+        outputs:
+          caption_out:
+            children: null
+            type: string
+          gate:
+            children: null
+            type: string
+          note:
+            children: null
+            type: string
+          publish_at:
+            children: null
+            type: string
+          row_json:
+            children: null
+            type: string
+          vtt:
+            children: null
+            type: string
+        selected: false
+        title: Збірка відео
+        type: code
+        variables:
+        - value_selector:
+          - '1788000000009'
+          - output
+          value_type: object
+          variable: plan
+        - value_selector:
+          - '1788000000003'
+          - cues_json
+          value_type: string
+          variable: cues_json
+        - value_selector:
+          - '1788000000003'
+          - title
+          value_type: string
+          variable: title
+        - value_selector:
+          - '1788000000003'
+          - niche
+          value_type: string
+          variable: niche
+        - value_selector:
+          - '1788000000003'
+          - platform
+          value_type: string
+          variable: platform
+        - value_selector:
+          - '1788000000003'
+          - caption_seed
+          value_type: string
+          variable: caption_seed
+        - value_selector:
+          - '1788000000001'
+          - content_id
+          value_type: string
+          variable: content_id
+        - value_selector:
+          - '1788000000003'
+          - project_id
+          value_type: string
+          variable: project_id
+        - value_selector:
+          - '1788000000001'
+          - use_rag
+          value_type: string
+          variable: use_rag
+        - value_selector:
+          - sys
+          - workflow_run_id
+          value_type: string
+          variable: run_id
+      height: 51
+      id: '1788000000040'
+      position:
+        x: 3340
+        y: 480
+      positionAbsolute:
+        x: 3340
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+      zIndex: 0
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: c-save
+            value: ok
+            varType: string
+            variable_selector:
+            - '1788000000040'
+            - gate
+          id: 'true'
+          logical_operator: and
+        desc: Жоден сегмент не вийшов — у базу не пишемо.
+        selected: false
+        title: Є що зберігати?
+        type: if-else
+      height: 126
+      id: '1788000000041'
+      position:
+        x: 3640
+        y: 480
+      positionAbsolute:
+        x: 3640
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '1788000000040'
+          - note
+          variable: fail_note
+        - value_selector:
+          - '1788000000009'
+          - output
+          - missing_from_brandbook
+          variable: fail_missing_from_brandbook
+        selected: false
+        title: Сегменти не згенерувалися
+        type: end
+      height: 130
+      id: '1788000000048'
+      position:
+        x: 3940
+        y: 800
+      positionAbsolute:
+        x: 3940
+        y: 800
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: sb-insert-d4
+            key: ''
+            type: text
+            value: '[{{#1788000000040.row_json#}}]'
+          type: json
+        default_value:
+        - key: body
+          type: string
+          value: ''
+        - key: status_code
+          type: number
+          value: 0
+        - key: headers
+          type: object
+          value: '{}'
+        desc: Один рядок = одне відео. PostgREST bulk-insert, 0 токенів.
+        error_strategy: default-value
+        headers: 'apikey: {{#env.SUPABASE_KEY#}}
+
+          Authorization: Bearer {{#env.SUPABASE_KEY#}}
+
+          Content-Type: application/json
+
+          Prefer: return=representation'
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        timeout:
+          connect: 10
+          read: 40
+          write: 20
+        title: Запис у day4_videos
+        type: http-request
+        url: '{{#env.SUPABASE_URL#}}/rest/v1/day4_videos'
+        variables: []
+      height: 120
+      id: '1788000000042'
+      position:
+        x: 3940
+        y: 480
+      positionAbsolute:
+        x: 3940
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+      zIndex: 0
+    - data:
+        default_value:
+        - key: text
+          type: string
+          value: ''
+        - key: json
+          type: array[object]
+          value: '[]'
+        desc: Читаємо назад рядок цього прогону.
+        error_strategy: default-value
+        is_team_authorization: true
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: The name of the table to query.
+            ja_JP: The name of the table to query.
+            pt_BR: The name of the table to query.
+            zh_Hans: The name of the table to query.
+          input_schema: null
+          label:
+            en_US: Table
+            ja_JP: Table
+            pt_BR: Table
+            zh_Hans: Table
+          llm_description: Provide the name of the table you want to query in Supabase.
+          max: null
+          min: null
+          multiple: false
+          name: table
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Maximum number of rows to return.
+            ja_JP: Maximum number of rows to return.
+            pt_BR: Maximum number of rows to return.
+            zh_Hans: Maximum number of rows to return.
+          input_schema: null
+          label:
+            en_US: Limit
+            ja_JP: Limit
+            pt_BR: Limit
+            zh_Hans: Limit
+          llm_description: Specify how many rows you want to retrieve. Default is 10.
+          max: null
+          min: null
+          multiple: false
+          name: limit
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: number
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Optional filter condition (e.g., 'status=active').
+            ja_JP: Optional filter condition (e.g., 'status=active').
+            pt_BR: Optional filter condition (e.g., 'status=active').
+            zh_Hans: Optional filter condition (e.g., 'status=active').
+          input_schema: null
+          label:
+            en_US: Filter
+            ja_JP: Filter
+            pt_BR: Filter
+            zh_Hans: Filter
+          llm_description: Provide a filter condition if needed. (e.g., 'status=active')
+          max: null
+          min: null
+          multiple: false
+          name: filter
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        params:
+          filter: ''
+          limit: ''
+          table: ''
+        plugin_id: langgenius/supabase
+        plugin_unique_identifier: langgenius/supabase:0.1.5@c841812a6a53609af8fa16e0ce238399b447ca797637d7d4cbdc57c8c1058275
+        provider_icon: https://cloud.dify.ai/console/api/workspaces/current/plugin/icon?tenant_id=67bfc09d-1d97-4c21-b4e7-fbb1e72f685b&filename=6239d130d5b7cbd43ca28b8fc2c08cccbe1440495aae395a8b8c31f0a086c149.svg
+        provider_id: langgenius/supabase/supabase
+        provider_name: langgenius/supabase/supabase
+        provider_show_name: Supabase
+        provider_type: builtin
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        title: Get Rows (перевірка запису)
+        tool_configurations: {}
+        tool_description: Get rows from a specified table in Supabase.
+        tool_label: Get Rows
+        tool_name: get_rows
+        tool_node_version: '2'
+        tool_parameters:
+          filter:
+            type: mixed
+            value: run_id={{#sys.workflow_run_id#}}
+          limit:
+            type: constant
+            value: 5
+          table:
+            type: mixed
+            value: day4_videos
+        type: tool
+      height: 87
+      id: '1788000000043'
+      position:
+        x: 4240
+        y: 480
+      positionAbsolute:
+        x: 4240
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+      zIndex: 0
+    - data:
+        code: "\ndef _collect(src):\n    \"\"\"Розгортає обгортку {\"data\": [...]}, яку плагін іноді додає навколо рядків.\"\"\"\n    rows =\
+          \ []\n    if isinstance(src, dict):\n        src = [src]\n    if not isinstance(src, list):\n        return rows\n    for el in src:\n\
+          \        if not isinstance(el, dict):\n            continue\n        data = el.get(\"data\")\n        if isinstance(data, list):\n \
+          \           rows.extend([r for r in data if isinstance(r, dict)])\n        elif isinstance(data, dict):\n            rows.append(data)\n\
+          \        elif el:\n            rows.append(el)\n    return rows\n\n\ndef _rows(js, txt):\n    \"\"\"\n    Плагін Supabase віддає рядки\
+          \ то як [{...}], то як [{\"data\":[...]}],\n    то лише текстом. Розбираємо всі три випадки — інакше флоу тихо\n    працює на порожньому\
+          \ списку і ніхто цього не помічає.\n    \"\"\"\n    import json\n    rows = _collect(js)\n    if not rows and isinstance(txt, str) and\
+          \ txt.strip().startswith((\"[\", \"{\")):\n        try:\n            rows = _collect(json.loads(txt))\n        except Exception:\n \
+          \           rows = []\n    return rows\n\nimport json\n\n\ndef _esc(v):\n    return (str(v).replace(\"&\", \"&amp;\").replace(\"<\"\
+          , \"&lt;\").replace(\">\", \"&gt;\"))\n\n\ndef main(saved_json, saved_text, run_id, note, use_rag, missing_bb,\n         publish_at,\
+          \ title):\n    saved = _rows(saved_json, saved_text)\n    ok = len(saved) > 0\n\n    mode = \" · RAG\" if str(use_rag).lower() == \"\
+          true\" else \" · без RAG\"\n    plain = [\n        \"Day 4 · відео%s\" % mode,\n        \"Сценарій: %s\" % title,\n        \"Рендер\
+          \ сегментів завершено; склейка в один mp4 — в адмінці.\",\n        \"Рядок у day4_videos: %s\" % (\"так\" if ok else \"НІ\"),\n    \
+          \    \"Черга публікації: %s (Київ)\" % publish_at,\n        \"run_id: %s\" % run_id,\n    ]\n    rich = [\n        \"<b>Day 4 · відео%s</b>\"\
+          \ % mode,\n        \"Сценарій: %s\" % _esc(title),\n        \"Рендер сегментів завершено; склейка в один mp4 — в адмінці.\",\n     \
+          \   \"Рядок у day4_videos: <b>%s</b>\" % (\"так\" if ok else \"НІ\"),\n        \"Черга публікації: <b>%s</b> (Київ)\" % _esc(publish_at),\n\
+          \        \"run_id: <code>%s</code>\" % _esc(run_id),\n    ]\n    if note:\n        plain.append(\"⚠️ \" + note); rich.append(\"⚠️ \"\
+          \ + _esc(note))\n    if missing_bb and missing_bb.strip() not in (\"\", \"—\"):\n        plain.append(\"Бренд-буку бракувало: \" + missing_bb)\n\
+          \        rich.append(\"<i>Бренд-буку бракувало: %s</i>\" % _esc(missing_bb))\n    plain.append(\"Затвердити: адмінка → Відео · Day 4\"\
+          )\n    rich.append(\"Затвердити: адмінка → Відео · Day 4\")\n\n    payload = json.dumps({\"chat_id\": \"YOUR_TELEGRAM_CHAT_ID\", \"\
+          text\": \"\\n\".join(rich),\n                          \"parse_mode\": \"HTML\", \"disable_web_page_preview\": True},\n            \
+          \             ensure_ascii=False)\n    return {\"report_md\": \"\\n\".join(plain), \"tg_payload\": payload,\n            \"saved\":\
+          \ len(saved), \"db_ok\": \"yes\" if ok else \"no\"}\n"
+        code_language: python3
+        desc: Факт запису + звіт у Telegram (HTML — підкреслення в даних безпечні).
+        outputs:
+          db_ok:
+            children: null
+            type: string
+          report_md:
+            children: null
+            type: string
+          saved:
+            children: null
+            type: number
+          tg_payload:
+            children: null
+            type: string
+        selected: false
+        title: Перевірка запису
+        type: code
+        variables:
+        - value_selector:
+          - '1788000000043'
+          - json
+          value_type: array[object]
+          variable: saved_json
+        - value_selector:
+          - '1788000000043'
+          - text
+          value_type: string
+          variable: saved_text
+        - value_selector:
+          - sys
+          - workflow_run_id
+          value_type: string
+          variable: run_id
+        - value_selector:
+          - '1788000000040'
+          - note
+          value_type: string
+          variable: note
+        - value_selector:
+          - '1788000000001'
+          - use_rag
+          value_type: string
+          variable: use_rag
+        - value_selector:
+          - '1788000000009'
+          - output
+          - missing_from_brandbook
+          value_type: string
+          variable: missing_bb
+        - value_selector:
+          - '1788000000040'
+          - publish_at
+          value_type: string
+          variable: publish_at
+        - value_selector:
+          - '1788000000003'
+          - title
+          value_type: string
+          variable: title
+      height: 51
+      id: '1788000000044'
+      position:
+        x: 4540
+        y: 480
+      positionAbsolute:
+        x: 4540
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+      zIndex: 0
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: tg-1788000000045
+            key: ''
+            type: text
+            value: '{{#1788000000044.tg_payload#}}'
+          type: json
+        default_value:
+        - key: body
+          type: string
+          value: ''
+        - key: status_code
+          type: number
+          value: 0
+        - key: headers
+          type: object
+          value: '{}'
+        desc: Скільки сегментів готово, куди стало в чергу, що бракувало бренд-буку.
+        error_strategy: default-value
+        headers: 'Content-Type: application/json'
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        timeout:
+          connect: 10
+          read: 20
+          write: 10
+        title: Telegram · звіт про відео
+        type: http-request
+        url: https://api.telegram.org/bot{{#env.TELEGRAM_BOT_TOKEN#}}/sendMessage
+        variables: []
+      height: 100
+      id: '1788000000045'
+      position:
+        x: 4840
+        y: 480
+      positionAbsolute:
+        x: 4840
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '1788000000044'
+          - report_md
+          variable: report
+        - value_selector:
+          - '1788000000031'
+          - files
+          variable: seg1_files
+        - value_selector:
+          - '1788000000032'
+          - files
+          variable: seg2_files
+        - value_selector:
+          - '1788000000033'
+          - files
+          variable: seg3_files
+        - value_selector:
+          - '1788000000040'
+          - vtt
+          variable: subtitles_vtt
+        - value_selector:
+          - '1788000000040'
+          - caption_out
+          variable: caption
+        - value_selector:
+          - '1788000000040'
+          - publish_at
+          variable: publish_at
+        - value_selector:
+          - '1788000000009'
+          - output
+          - brand_alignment
+          variable: brand_alignment
+        - value_selector:
+          - '1788000000009'
+          - output
+          - missing_from_brandbook
+          variable: missing_from_brandbook
+        - value_selector:
+          - '1788000000040'
+          - row_json
+          variable: row_json
+        selected: false
+        title: Готово · відео в черзі
+        type: end
+      height: 200
+      id: '1788000000046'
+      position:
+        x: 5140
+        y: 480
+      positionAbsolute:
+        x: 5140
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    viewport:
+      x: 0
+      y: 0
+      zoom: 0.35
+  rag_pipeline_variables: []
