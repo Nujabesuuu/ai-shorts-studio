@@ -44,8 +44,7 @@ export default function RootLayout({
               role="status"
               className="border-b border-line bg-canvas-2 px-5 py-2.5 text-center text-[12.5px] text-amber sm:px-8"
             >
-              Демо на тестових даних: лише перегляд. Зміни й затвердження нічого не
-              записують.
+              Демо-версія: лише перегляд. Зміни й затвердження нічого не записують.
             </div>
           )}
           <main className="mx-auto w-full max-w-[1340px] px-5 py-8 sm:px-8 lg:px-10 lg:py-12">
