@@ -1,0 +1,23 @@
+.DS_Store
+node_modules/
+.next/
+.idea/
+__pycache__/
+
+# Локальні налаштування інструментів
+.claude/settings.local.json
+
+# Сторонні й застарілі матеріали, які не є частиною проєкту
+Free Admin Dashboard UI Kit (Community)/
+_legacy-admin-old/
+AI-Shorts-Studio-Admin-Panel-Instruction.pdf
+
+# Артефакти Dify з підставленими ключами (генеруються локально з .env.local).
+# У репозиторій йдуть лише *.public.yml — той самий граф, але без секретів.
+dify/*.yml
+!dify/*.public.yml
+
+# env
+.env
+.env.local
+.env*.local
