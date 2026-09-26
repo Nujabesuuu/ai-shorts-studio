@@ -16,7 +16,7 @@ The data is a curated subset of a real run: 3 projects, 4 playable videos and th
   <img src="docs/media/admin-walkthrough.gif" alt="Admin panel walkthrough" width="720">
 </p>
 
-> **Educational project**, built during the AI agent orchestration course by Upflame.
+> **Educational project**, built during the AI agent orchestration course by Appflame.
 > The agent workflows run on Dify; the admin panel is a Next.js app on top of Supabase.
 
 ## What it does
